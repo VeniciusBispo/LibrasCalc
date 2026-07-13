@@ -26,14 +26,14 @@
 
 @layer base {
   :root { /* theme_wood */
-    --theme-main-bg: #8b5a2b;
+    --theme-main-bg: #e6d3b3;
     --theme-main-pattern: 
-      repeating-linear-gradient(45deg, rgba(0, 0, 0, 0.05) 0px, rgba(0, 0, 0, 0.05) 2px, transparent 2px, transparent 8px),
-      repeating-linear-gradient(-45deg, rgba(255, 255, 255, 0.05) 0px, rgba(255, 255, 255, 0.05) 2px, transparent 2px, transparent 12px),
-      linear-gradient(to right, #6b4226 0%, #8b5a2b 50%, #6b4226 100%);
+      repeating-linear-gradient(45deg, rgba(0, 0, 0, 0.02) 0px, rgba(0, 0, 0, 0.02) 2px, transparent 2px, transparent 8px),
+      repeating-linear-gradient(-45deg, rgba(255, 255, 255, 0.2) 0px, rgba(255, 255, 255, 0.2) 2px, transparent 2px, transparent 12px),
+      linear-gradient(to right, #e0c8a3 0%, #e6d3b3 50%, #e0c8a3 100%);
     --theme-main-size: auto;
-    --theme-dark-bg: #5a3518;
-    --theme-dark-pattern: repeating-linear-gradient(45deg, rgba(0, 0, 0, 0.1) 0px, rgba(0, 0, 0, 0.1) 2px, transparent 2px, transparent 8px);
+    --theme-dark-bg: #dcb388;
+    --theme-dark-pattern: repeating-linear-gradient(45deg, rgba(0, 0, 0, 0.04) 0px, rgba(0, 0, 0, 0.04) 2px, transparent 2px, transparent 8px);
   }
   
   .theme-ocean {
