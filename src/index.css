@@ -1,0 +1,69 @@
+@import "tailwindcss";
+
+@theme {
+  --font-sans: 'Inter', system-ui, -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Helvetica, Arial, sans-serif;
+  
+  /* Wood & Skeuomorphic Palette */
+  --color-wood-light: #f4e8d3;
+  --color-wood-base: #e6d3b3;
+  --color-wood-dark: #cfa474;
+  --color-wood-shadow: #b5835a;
+  
+  --color-ivory: #fffbf0;
+  --color-ivory-shadow: #d1c7b8;
+  
+  --color-op-blue: #2b5585;
+  --color-op-orange: #d96c2e;
+  
+  /* Skeuomorphic Shadows */
+  --shadow-wood-inset: inset 6px 6px 12px rgba(181, 131, 90, 0.4), inset -6px -6px 12px rgba(255, 255, 255, 0.6);
+  --shadow-wood-deep: inset 10px 10px 20px rgba(160, 110, 70, 0.6), inset -10px -10px 20px rgba(255, 255, 255, 0.3);
+  --shadow-card-3d: 4px 8px 12px rgba(0,0,0,0.2), 0 2px 4px rgba(0,0,0,0.1), inset -2px -4px 6px rgba(0,0,0,0.05), inset 2px 4px 6px rgba(255,255,255,0.9);
+  --shadow-card-pressed: inset 2px 4px 8px rgba(0,0,0,0.15), inset -2px -2px 6px rgba(255,255,255,0.8);
+  
+  --shadow-slot-glow: inset 0 0 15px rgba(59, 130, 246, 0.5), 0 0 20px rgba(59, 130, 246, 0.6);
+}
+
+@layer base {
+  :root {
+    --theme-main-bg: #e6d3b3;
+    --theme-main-pattern: repeating-linear-gradient(45deg, transparent, transparent 10px, rgba(207, 164, 116, 0.05) 10px, rgba(207, 164, 116, 0.05) 20px), linear-gradient(to right, rgba(255,255,255,0.4) 0%, rgba(255,255,255,0) 50%, rgba(207,164,116,0.3) 100%);
+    --theme-main-size: auto;
+    --theme-dark-bg: #dcb388;
+    --theme-dark-pattern: repeating-linear-gradient(45deg, transparent, transparent 8px, rgba(160, 110, 70, 0.08) 8px, rgba(160, 110, 70, 0.08) 16px);
+  }
+  
+  .theme-ocean {
+    --theme-main-bg: #4a7c82;
+    --theme-main-pattern: repeating-linear-gradient(45deg, transparent, transparent 10px, rgba(255, 255, 255, 0.1) 10px, rgba(255, 255, 255, 0.1) 20px), radial-gradient(circle at 50% 0%, rgba(255,255,255,0.2) 0%, transparent 70%);
+    --theme-main-size: auto;
+    --theme-dark-bg: #2d555c;
+    --theme-dark-pattern: repeating-linear-gradient(45deg, transparent, transparent 8px, rgba(0, 0, 0, 0.1) 8px, rgba(0, 0, 0, 0.1) 16px);
+  }
+  
+  .theme-space {
+    --theme-main-bg: #1c1c38;
+    --theme-main-pattern: radial-gradient(circle at 20% 30%, rgba(255,255,255,0.3) 2px, transparent 2px), radial-gradient(circle at 70% 60%, rgba(255,255,255,0.3) 2px, transparent 2px), radial-gradient(circle at 40% 80%, rgba(255,255,255,0.3) 2px, transparent 2px);
+    --theme-main-size: 100px 100px;
+    --theme-dark-bg: #101024;
+    --theme-dark-pattern: none;
+  }
+
+  body {
+    @apply m-0 p-0 overflow-hidden font-sans;
+    background: #3e4a59; /* Fundo embaçado de escritório simulado */
+  }
+}
+
+@layer utilities {
+  .bg-wood-pattern {
+    background-color: var(--theme-main-bg);
+    background-image: var(--theme-main-pattern);
+    background-size: var(--theme-main-size);
+  }
+  
+  .bg-wood-dark-pattern {
+    background-color: var(--theme-dark-bg);
+    background-image: var(--theme-dark-pattern);
+  }
+}
