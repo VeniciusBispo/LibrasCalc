@@ -11,8 +11,11 @@ import { shopItems } from '@/store/shopItems';
 import { AnimatedIcon } from '@/components/AnimatedIcon';
 
 function App() {
-  const { xp, level, coins, username, setUsername, activeIcon, activeTheme, userId } = useGameStore();
+  const { xp, level, coins, username, login, logout, activeIcon, activeTheme, userId } = useGameStore();
   const [inputValue, setInputValue] = useState('');
+  const [passwordValue, setPasswordValue] = useState('');
+  const [isLoggingIn, setIsLoggingIn] = useState(false);
+  const [loginError, setLoginError] = useState<string | null>(null);
   const [isStoreOpen, setIsStoreOpen] = useState(false);
   const [isRankingOpen, setIsRankingOpen] = useState(false);
   const [bonusMessage, setBonusMessage] = useState<string | null>(null);
@@ -35,11 +38,13 @@ function App() {
         // a requisição pode retornar o index.html em vez de JSON.
         const contentType = response.headers.get("content-type");
         if (!contentType || !contentType.includes("application/json")) {
-          console.warn("Aviso: A rota de API não retornou JSON. Ignorando bônus no ambiente local.");
+          console.warn("Aviso: A rota de API não retornou JSON. Ignorando bônus no ambiente local/Netlify erro.");
           return;
         }
 
-        const data = await response.json();
+        const text = await response.text();
+        if (!text) return;
+        const data = JSON.parse(text);
 
         let rank = 0;
         let isTop3 = false;
@@ -81,41 +86,65 @@ function App() {
         <motion.div
           initial={{ opacity: 0, scale: 0.9, y: 20 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
-          className="bg-wood-pattern p-12 rounded-[3rem] shadow-wood-deep w-full max-w-md flex flex-col items-center gap-8 text-center border-t border-l border-white/40"
+          className="bg-wood-pattern p-12 rounded-[3rem] shadow-wood-deep w-full max-w-md flex flex-col items-center gap-6 text-center border-t border-l border-white/40 relative"
         >
           <div className="p-5 bg-[#2b5585] text-white rounded-3xl shadow-card-3d border border-[#3c6b9d]">
             <Sparkles size={48} strokeWidth={1.5} />
           </div>
           <div>
-            <h1 className="text-4xl font-black text-[#2b5585] tracking-tight mb-3 drop-shadow-sm">Bem-vindo!</h1>
-            <p className="text-[#3c6b9d] font-bold">Qual é o seu nome, jovem aventureiro?</p>
+            <h1 className="text-4xl font-black text-[#2b5585] tracking-tight mb-2 drop-shadow-sm">Bem-vindo!</h1>
+            <p className="text-[#3c6b9d] font-bold text-sm">Se for sua primeira vez, a conta será criada automaticamente.</p>
           </div>
 
           <form
-            className="w-full flex flex-col gap-5 mt-2"
-            onSubmit={(e) => {
+            className="w-full flex flex-col gap-4 mt-2"
+            onSubmit={async (e) => {
               e.preventDefault();
-              if (inputValue.trim()) {
-                setUsername(inputValue.trim());
+              if (inputValue.trim() && passwordValue.trim()) {
+                setIsLoggingIn(true);
+                setLoginError(null);
+                const result = await login(inputValue.trim(), passwordValue.trim());
+                setIsLoggingIn(false);
+                if (result !== true) {
+                  setLoginError(result as string);
+                }
               }
             }}
           >
-            <input
-              type="text"
-              value={inputValue}
-              onChange={(e) => setInputValue(e.target.value)}
-              placeholder="Digite seu nome..."
-              className="w-full px-6 py-5 rounded-2xl bg-wood-dark-pattern shadow-wood-inset focus:outline-none focus:ring-4 focus:ring-blue-400/50 transition-all text-xl font-bold text-center text-[#2b5585] placeholder:font-medium placeholder:text-[#5a3b1a]/40"
-              autoFocus
-            />
+            <div className="flex flex-col gap-3">
+              <input
+                type="text"
+                value={inputValue}
+                onChange={(e) => setInputValue(e.target.value)}
+                placeholder="Nome de Usuário"
+                className="w-full px-6 py-4 rounded-2xl bg-wood-dark-pattern shadow-wood-inset focus:outline-none focus:ring-4 focus:ring-blue-400/50 transition-all text-xl font-bold text-center text-[#2b5585] placeholder:font-medium placeholder:text-[#5a3b1a]/40"
+                autoFocus
+                disabled={isLoggingIn}
+              />
+              <input
+                type="password"
+                value={passwordValue}
+                onChange={(e) => setPasswordValue(e.target.value)}
+                placeholder="Senha"
+                className="w-full px-6 py-4 rounded-2xl bg-wood-dark-pattern shadow-wood-inset focus:outline-none focus:ring-4 focus:ring-blue-400/50 transition-all text-xl font-bold text-center text-[#2b5585] placeholder:font-medium placeholder:text-[#5a3b1a]/40"
+                disabled={isLoggingIn}
+              />
+            </div>
+            
+            {loginError && (
+              <div className="text-red-500 font-bold bg-red-100 p-3 rounded-xl border border-red-200">
+                {loginError}
+              </div>
+            )}
+
             <motion.button
-              whileHover={{ scale: 1.02 }}
-              whileTap={{ scale: 0.95 }}
+              whileHover={isLoggingIn ? {} : { scale: 1.02 }}
+              whileTap={isLoggingIn ? {} : { scale: 0.95 }}
               type="submit"
-              disabled={!inputValue.trim()}
-              className="w-full bg-[#d96c2e] text-white font-black text-xl py-5 rounded-2xl shadow-card-3d border border-orange-400 flex items-center justify-center gap-3 hover:bg-[#e87a3c] disabled:opacity-50 disabled:cursor-not-allowed transition-all"
+              disabled={!inputValue.trim() || !passwordValue.trim() || isLoggingIn}
+              className="w-full bg-[#d96c2e] text-white font-black text-xl py-5 rounded-2xl shadow-card-3d border border-orange-400 flex items-center justify-center gap-3 hover:bg-[#e87a3c] disabled:opacity-50 disabled:cursor-not-allowed transition-all mt-2"
             >
-              Jogar Agora <Play fill="currentColor" size={24} />
+              {isLoggingIn ? 'Conectando...' : 'Jogar Agora'} {!isLoggingIn && <Play fill="currentColor" size={24} />}
             </motion.button>
           </form>
         </motion.div>
@@ -218,6 +247,7 @@ function App() {
               <div className="flex flex-col items-end">
                 <span className="text-slate-500 font-medium text-xs leading-none mb-1">Olá,</span>
                 <span className="text-[#1a385c] font-black text-lg leading-none">{username}</span>
+                <button onClick={() => logout()} className="text-[10px] font-bold text-red-500 hover:text-red-600 uppercase tracking-wider mt-0.5">Sair</button>
               </div>
               <div className="w-12 h-12 rounded-full bg-slate-100 border-[3px] border-white shadow-md overflow-hidden flex items-center justify-center cursor-pointer hover:scale-105 hover:shadow-lg transition-all">
                 <AnimatedIcon effect={activeIconItem?.effect}>

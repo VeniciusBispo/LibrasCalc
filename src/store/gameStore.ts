@@ -28,7 +28,8 @@ interface GameState {
 
   equationHistory: Record<string, number>;
   equation: EquationItem[];
-  setUsername: (name: string) => void;
+  login: (username: string, password: string) => Promise<boolean | string>;
+  logout: () => void;
   addXP: (amount: number) => void;
   addToEquation: (item: Omit<EquationItem, 'id'>) => void;
   removeFromEquation: (id: string) => void;
@@ -63,10 +64,34 @@ export const useGameStore = create<GameState>()(
 
       equationHistory: {},
       equation: [],
-      setUsername: (name) => {
-        const newUserId = crypto.randomUUID();
-        set({ username: name, userId: newUserId });
-        get().syncToDatabase();
+      login: async (username, password) => {
+        try {
+          const res = await fetch('/api/auth', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({ username, password })
+          });
+          const data = await res.json();
+          if (!res.ok) {
+            return data.error || 'Erro de comunicação';
+          }
+          set({
+            userId: data.userId,
+            username: data.username,
+            level: data.level || 1,
+            xp: data.xp || 0,
+            coins: data.coins || 0,
+            activeIcon: data.activeIcon || 'icon_user'
+          });
+          get().syncToDatabase();
+          return true;
+        } catch (e) {
+          console.error('Login error', e);
+          return 'Erro ao tentar conectar';
+        }
+      },
+      logout: () => {
+        set({ userId: null, username: '', xp: 0, level: 1, coins: 0, equationHistory: {} });
       },
       addXP: (amount) => {
         set((state) => {
