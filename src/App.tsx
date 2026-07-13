@@ -35,11 +35,13 @@ function App() {
         // a requisição pode retornar o index.html em vez de JSON.
         const contentType = response.headers.get("content-type");
         if (!contentType || !contentType.includes("application/json")) {
-          console.warn("Aviso: A rota de API não retornou JSON. Ignorando bônus no ambiente local.");
+          console.warn("Aviso: A rota de API não retornou JSON. Ignorando bônus no ambiente local/Netlify erro.");
           return;
         }
 
-        const data = await response.json();
+        const text = await response.text();
+        if (!text) return;
+        const data = JSON.parse(text);
 
         let rank = 0;
         let isTop3 = false;

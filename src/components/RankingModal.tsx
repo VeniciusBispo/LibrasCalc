@@ -35,15 +35,26 @@ export const RankingModal: React.FC<RankingModalProps> = ({ isOpen, onClose }) =
     setError(null);
     try {
       const response = await fetch('/api/getRanking');
-      const data = await response.json();
+      let data: any = {};
+      try {
+        const text = await response.text();
+        if (text) {
+          data = JSON.parse(text);
+        }
+      } catch (e) {
+        console.error("Failed to parse response", e);
+      }
       
       if (!response.ok) {
+        if (response.status === 502) {
+          throw new Error("O servidor demorou muito para responder (Timeout 502). O MongoDB bloqueou a conexão ou demorou mais de 10 segundos.");
+        }
         if (data.error === "MongoDB URI not configured") {
           setError("MongoDB não configurado. Adicione sua URI no Netlify ou no arquivo da função para ver o ranking online.");
           setLoading(false);
           return;
         }
-        throw new Error(data.details || data.error || 'Failed to fetch');
+        throw new Error(data.details || data.error || 'Erro de comunicação com o servidor');
       }
 
       setPlayers(data.ranking || []);
