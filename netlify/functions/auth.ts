@@ -26,7 +26,7 @@ export const handler: Handler = async (event, context) => {
     return { statusCode: 400, body: JSON.stringify({ error: "Invalid JSON" }) };
   }
 
-  const { username, password } = body;
+  const { username, password, action = 'login' } = body;
 
   if (!username || !password || username.trim() === '' || password.trim() === '') {
     return { statusCode: 400, body: JSON.stringify({ error: "Username and password are required" }) };
@@ -43,7 +43,16 @@ export const handler: Handler = async (event, context) => {
 
     let user = await usersCollection.findOne({ username: usernameStr });
 
-    if (!user) {
+    if (action === 'register') {
+      if (user) {
+        await client.close();
+        return {
+          statusCode: 409,
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ error: "Este nome de usuário já existe." })
+        };
+      }
+      
       // Create new user
       const newUserId = crypto.randomUUID();
       user = {
@@ -57,6 +66,16 @@ export const handler: Handler = async (event, context) => {
       };
       await usersCollection.insertOne(user);
     } else {
+      // Login action
+      if (!user) {
+        await client.close();
+        return {
+          statusCode: 404,
+          headers: { 'Content-Type': 'application/json' },
+          body: JSON.stringify({ error: "Usuário não encontrado." })
+        };
+      }
+
       // User exists
       if (!user.password) {
         // Adopt old account
@@ -67,7 +86,7 @@ export const handler: Handler = async (event, context) => {
         return {
           statusCode: 401,
           headers: { 'Content-Type': 'application/json' },
-          body: JSON.stringify({ error: "Senha incorreta" })
+          body: JSON.stringify({ error: "Senha incorreta." })
         };
       }
     }

@@ -12,9 +12,11 @@ import { shopItems } from '@/store/shopItems';
 import { AnimatedIcon } from '@/components/AnimatedIcon';
 
 function App() {
-  const { xp, level, coins, username, login, logout, activeIcon, activeTheme, userId } = useGameStore();
+  const { xp, level, coins, username, login, activeIcon, activeTheme, userId } = useGameStore();
   const [inputValue, setInputValue] = useState('');
   const [passwordValue, setPasswordValue] = useState('');
+  const [confirmPasswordValue, setConfirmPasswordValue] = useState('');
+  const [isLoginMode, setIsLoginMode] = useState(true);
   const [isLoggingIn, setIsLoggingIn] = useState(false);
   const [loginError, setLoginError] = useState<string | null>(null);
   const [isStoreOpen, setIsStoreOpen] = useState(false);
@@ -94,8 +96,12 @@ function App() {
             <Sparkles size={48} strokeWidth={1.5} />
           </div>
           <div>
-            <h1 className="text-4xl font-black text-[#2b5585] tracking-tight mb-2 drop-shadow-sm">Bem-vindo!</h1>
-            <p className="text-[#3c6b9d] font-bold text-sm">Se for sua primeira vez, a conta será criada automaticamente.</p>
+            <h1 className="text-4xl font-black text-[#2b5585] tracking-tight mb-2 drop-shadow-sm">
+              {isLoginMode ? 'Bem-vindo de volta!' : 'Criar Nova Conta'}
+            </h1>
+            <p className="text-[#3c6b9d] font-bold text-sm">
+              {isLoginMode ? 'Entre com seu nome e senha para continuar jogando.' : 'Crie sua conta para salvar seu progresso na nuvem.'}
+            </p>
           </div>
 
           <form
@@ -103,9 +109,13 @@ function App() {
             onSubmit={async (e) => {
               e.preventDefault();
               if (inputValue.trim() && passwordValue.trim()) {
+                if (!isLoginMode && passwordValue !== confirmPasswordValue) {
+                  setLoginError("As senhas não coincidem.");
+                  return;
+                }
                 setIsLoggingIn(true);
                 setLoginError(null);
-                const result = await login(inputValue.trim(), passwordValue.trim());
+                const result = await login(inputValue.trim(), passwordValue.trim(), isLoginMode ? 'login' : 'register');
                 setIsLoggingIn(false);
                 if (result !== true) {
                   setLoginError(result as string);
@@ -131,6 +141,16 @@ function App() {
                 className="w-full px-6 py-4 rounded-2xl bg-wood-dark-pattern shadow-wood-inset focus:outline-none focus:ring-4 focus:ring-blue-400/50 transition-all text-xl font-bold text-center text-[#2b5585] placeholder:font-medium placeholder:text-[#5a3b1a]/40"
                 disabled={isLoggingIn}
               />
+              {!isLoginMode && (
+                <input
+                  type="password"
+                  value={confirmPasswordValue}
+                  onChange={(e) => setConfirmPasswordValue(e.target.value)}
+                  placeholder="Confirmar Senha"
+                  className="w-full px-6 py-4 rounded-2xl bg-wood-dark-pattern shadow-wood-inset focus:outline-none focus:ring-4 focus:ring-blue-400/50 transition-all text-xl font-bold text-center text-[#2b5585] placeholder:font-medium placeholder:text-[#5a3b1a]/40"
+                  disabled={isLoggingIn}
+                />
+              )}
             </div>
             
             {loginError && (
@@ -143,11 +163,25 @@ function App() {
               whileHover={isLoggingIn ? {} : { scale: 1.02 }}
               whileTap={isLoggingIn ? {} : { scale: 0.95 }}
               type="submit"
-              disabled={!inputValue.trim() || !passwordValue.trim() || isLoggingIn}
+              disabled={!inputValue.trim() || !passwordValue.trim() || (!isLoginMode && !confirmPasswordValue.trim()) || isLoggingIn}
               className="w-full bg-[#d96c2e] text-white font-black text-xl py-5 rounded-2xl shadow-card-3d border border-orange-400 flex items-center justify-center gap-3 hover:bg-[#e87a3c] disabled:opacity-50 disabled:cursor-not-allowed transition-all mt-2"
             >
-              {isLoggingIn ? 'Conectando...' : 'Jogar Agora'} {!isLoggingIn && <Play fill="currentColor" size={24} />}
+              {isLoggingIn ? 'Conectando...' : (isLoginMode ? 'Entrar' : 'Criar Conta')} {!isLoggingIn && <Play fill="currentColor" size={24} />}
             </motion.button>
+
+            <button
+              type="button"
+              onClick={() => {
+                setIsLoginMode(!isLoginMode);
+                setLoginError(null);
+                setPasswordValue('');
+                setConfirmPasswordValue('');
+              }}
+              className="text-[#2b5585] font-bold text-sm hover:underline mt-2"
+              disabled={isLoggingIn}
+            >
+              {isLoginMode ? 'Não tem uma conta? Crie uma agora!' : 'Já tem uma conta? Faça login!'}
+            </button>
           </form>
         </motion.div>
       </div>

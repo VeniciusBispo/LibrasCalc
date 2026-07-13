@@ -28,7 +28,7 @@ interface GameState {
 
   equationHistory: Record<string, number>;
   equation: EquationItem[];
-  login: (username: string, password: string) => Promise<boolean | string>;
+  login: (username: string, password: string, action?: 'login' | 'register') => Promise<boolean | string>;
   logout: () => void;
   addXP: (amount: number) => void;
   addToEquation: (item: Omit<EquationItem, 'id'>) => void;
@@ -64,12 +64,12 @@ export const useGameStore = create<GameState>()(
 
       equationHistory: {},
       equation: [],
-      login: async (username, password) => {
+      login: async (username, password, action = 'login') => {
         try {
           const res = await fetch('/api/auth', {
             method: 'POST',
             headers: { 'Content-Type': 'application/json' },
-            body: JSON.stringify({ username, password })
+            body: JSON.stringify({ username, password, action })
           });
           const data = await res.json();
           if (!res.ok) {
