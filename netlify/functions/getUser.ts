@@ -24,7 +24,7 @@ export const handler: Handler = async (event, context) => {
     const db = client.db(dbName);
     const usersCollection = db.collection('users');
 
-    const user = await usersCollection.findOne({ userId }, { projection: { _id: 0, level: 1, xp: 1, coins: 1 } });
+    const user = await usersCollection.findOne({ userId }, { projection: { _id: 0, level: 1, xp: 1, coins: 1, activeIcon: 1, activeTheme: 1, activeDifficulty: 1, unlockedIcons: 1, unlockedThemes: 1, unlockedDifficulties: 1 } });
     
     await client.close();
 

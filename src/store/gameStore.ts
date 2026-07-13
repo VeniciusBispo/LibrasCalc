@@ -81,7 +81,12 @@ export const useGameStore = create<GameState>()(
             level: data.level || 1,
             xp: data.xp || 0,
             coins: data.coins || 0,
-            activeIcon: data.activeIcon || 'icon_user'
+            activeIcon: data.activeIcon || 'icon_user',
+            activeTheme: data.activeTheme || 'theme_wood',
+            activeDifficulty: data.activeDifficulty || 'diff_easy',
+            unlockedIcons: data.unlockedIcons || ['icon_user'],
+            unlockedThemes: data.unlockedThemes || ['theme_wood'],
+            unlockedDifficulties: data.unlockedDifficulties || ['diff_easy']
           });
           get().syncToDatabase();
           return true;
@@ -91,7 +96,20 @@ export const useGameStore = create<GameState>()(
         }
       },
       logout: () => {
-        set({ userId: null, username: '', xp: 0, level: 1, coins: 0, equationHistory: {} });
+        set({ 
+          userId: null, 
+          username: '', 
+          xp: 0, 
+          level: 1, 
+          coins: 0, 
+          equationHistory: {},
+          activeIcon: 'icon_user',
+          activeTheme: 'theme_wood',
+          activeDifficulty: 'diff_easy',
+          unlockedIcons: ['icon_user'],
+          unlockedThemes: ['theme_wood'],
+          unlockedDifficulties: ['diff_easy']
+        });
       },
       addXP: (amount) => {
         set((state) => {
@@ -240,7 +258,17 @@ export const useGameStore = create<GameState>()(
           const response = await fetch(`/api/getUser?userId=${userId}`);
           if (response.ok) {
             const data = await response.json();
-            set({ level: data.level, xp: data.xp, coins: data.coins });
+            set({ 
+              level: data.level, 
+              xp: data.xp, 
+              coins: data.coins,
+              activeIcon: data.activeIcon || 'icon_user',
+              activeTheme: data.activeTheme || 'theme_wood',
+              activeDifficulty: data.activeDifficulty || 'diff_easy',
+              unlockedIcons: data.unlockedIcons || ['icon_user'],
+              unlockedThemes: data.unlockedThemes || ['theme_wood'],
+              unlockedDifficulties: data.unlockedDifficulties || ['diff_easy']
+            });
           }
         } catch (error) {
           console.error("API fetch error:", error);

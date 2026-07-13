@@ -62,7 +62,12 @@ export const handler: Handler = async (event, context) => {
         level: 1,
         xp: 0,
         coins: 0,
-        activeIcon: 'icon_user'
+        activeIcon: 'icon_user',
+        activeTheme: 'theme_wood',
+        activeDifficulty: 'diff_easy',
+        unlockedIcons: ['icon_user'],
+        unlockedThemes: ['theme_wood'],
+        unlockedDifficulties: ['diff_easy']
       };
       await usersCollection.insertOne(user);
     } else {

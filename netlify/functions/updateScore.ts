@@ -15,7 +15,7 @@ export const handler: Handler = async (event, context) => {
 
   try {
     const data = JSON.parse(event.body || '{}');
-    const { userId, username, level, xp, coins, activeIcon } = data;
+    const { userId, username, level, xp, coins, activeIcon, activeTheme, activeDifficulty, unlockedIcons, unlockedThemes, unlockedDifficulties } = data;
 
     if (!userId || !username) {
       return { statusCode: 400, body: 'Missing userId or username' };
@@ -35,6 +35,11 @@ export const handler: Handler = async (event, context) => {
           xp,
           coins,
           activeIcon,
+          activeTheme,
+          activeDifficulty,
+          unlockedIcons,
+          unlockedThemes,
+          unlockedDifficulties,
           lastUpdated: new Date()
         }
       },
