@@ -18,13 +18,13 @@ export const CardTray: React.FC<CardTrayProps> = ({ mode = 'all' }) => {
 
   /* ──────── NÚMEROS ──────── */
   const renderNumbers = () => (
-    <div className="w-fit mx-auto bg-wood-dark-pattern p-4 pt-8 sm:p-6 sm:pt-10 rounded-2xl sm:rounded-[2rem] shadow-wood-inset border-b border-white/20 border-r border-white/10 relative">
+    <div className="w-fit mx-auto bg-wood-dark-pattern p-2 pt-8 sm:p-6 sm:pt-10 rounded-2xl sm:rounded-[2rem] shadow-wood-inset border-b border-white/20 border-r border-white/10 relative">
       <h3 className="text-[0.55rem] sm:text-[0.65rem] font-black text-[#66432b]/70 uppercase tracking-[0.2em] absolute top-2.5 left-4 sm:top-3.5 sm:left-6">
         Números em Libras
       </h3>
 
-      {/* Grid uniforme 4 colunas com scroll */}
-      <div className="grid grid-cols-4 sm:grid-cols-4 gap-2 sm:gap-3 justify-items-center max-h-[200px] sm:max-h-[400px] overflow-y-auto p-1 sm:p-2 scrollbar-thin scrollbar-thumb-amber-700/30 scrollbar-track-transparent">
+      {/* Grid uniforme 5 colunas com scroll no mobile */}
+      <div className="grid grid-cols-5 sm:grid-cols-4 gap-1.5 sm:gap-3 justify-items-center max-h-[160px] sm:max-h-[400px] overflow-y-auto p-1 sm:p-2 scrollbar-thin scrollbar-thumb-amber-700/30 scrollbar-track-transparent">
         {numbers.map((num) => (
           <PremiumDraggableCard
             key={`num-${num}`}

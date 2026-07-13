@@ -92,10 +92,10 @@ export const PremiumDraggableCard: React.FC<PremiumDraggableCardProps> = ({
       dragElastic={0.2}
       className={`
         relative flex flex-col items-center justify-center
-        rounded-2xl border-2 ${borderAccent}
-        transition-all overflow-hidden select-none
+        rounded-xl sm:rounded-2xl border-2 ${borderAccent}
+        transition-colors overflow-hidden select-none
         shadow-card-3d
-        ${isInSlot ? 'w-full h-full' : (isNumber ? 'w-14 h-20 sm:w-[5.5rem] sm:h-[7.5rem]' : (gifInfo?.aspect === 'landscape' ? 'w-[5.5rem] h-20 sm:w-[14rem] sm:h-[11rem]' : 'w-[4.5rem] h-20 sm:w-[8.5rem] sm:h-[11rem]'))}
+        ${isInSlot ? 'w-full h-full' : (isNumber ? 'w-12 h-[4.5rem] sm:w-[5.5rem] sm:h-[7.5rem]' : (gifInfo?.aspect === 'landscape' ? 'w-[4.5rem] h-[4.5rem] sm:w-[14rem] sm:h-[11rem]' : 'w-12 h-[4.5rem] sm:w-[8.5rem] sm:h-[11rem]'))}
         focus:outline-none focus-visible:ring-4 focus-visible:ring-blue-500 focus-visible:ring-offset-2
         ${disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-grab active:cursor-grabbing'}
         ${bgClass}
