@@ -206,7 +206,7 @@ export const RankingModal: React.FC<RankingModalProps> = ({ isOpen, onClose }) =
                       {index < 3 && (
                         <div className="flex items-center gap-1 bg-yellow-100 px-3 py-1.5 rounded-full border border-yellow-200">
                           <span className="font-black text-yellow-600 text-sm">
-                            +{index === 0 ? 500 : index === 1 ? 300 : 100}
+                            +{index === 0 ? 10 : index === 1 ? 5 : 2}
                           </span>
                           <LucideIcons.Coins size={14} className="text-yellow-500" />
                         </div>

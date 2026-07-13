@@ -21,7 +21,7 @@ export const handler: Handler = async (event, context) => {
     const metaCollection = db.collection('metadata');
 
     const RESET_INTERVAL = 30 * 60 * 1000; // 30 minutes in ms
-    const REWARDS = [500, 300, 100];
+    const REWARDS = [10, 5, 2];
 
     let meta = await metaCollection.findOne({ _id: 'ranking_reset' });
     let now = Date.now();
