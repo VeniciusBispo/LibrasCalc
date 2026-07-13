@@ -41,7 +41,7 @@ export const EquationBoard: React.FC = () => {
 
   return (
     <div 
-      className="relative flex flex-col items-center justify-center p-6 w-full"
+      className="relative flex flex-col items-center justify-center p-2 sm:p-6 w-full"
       role="region"
       aria-label="Quadro principal de equações"
     >
@@ -53,23 +53,23 @@ export const EquationBoard: React.FC = () => {
             initial={{ opacity: 0, scale: 0.5, y: -20 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.8, y: -20 }}
-            className={`absolute -top-8 flex items-center gap-3 px-8 py-4 rounded-3xl font-black text-white shadow-xl text-lg z-50 ${
+            className={`absolute -top-8 flex items-center gap-2 sm:gap-3 px-4 py-2 sm:px-8 sm:py-4 rounded-2xl sm:rounded-3xl font-black text-white shadow-xl text-sm sm:text-lg z-50 whitespace-nowrap ${
               status === 'success' ? 'bg-gradient-to-r from-green-400 to-emerald-500 shadow-green-500/30' : 'bg-gradient-to-r from-red-400 to-rose-500 shadow-red-500/30'
             }`}
           >
             {status === 'success' ? (
               <>
-                <CheckCircle size={28} /> Brilhante! +{earnedXP} XP
-                {levelUpData.leveledUp && <span className="ml-2 bg-white/20 px-3 py-1 rounded-full text-sm">Nível Up! +{levelUpData.earnedCoins} 🪙</span>}
+                <CheckCircle className="w-5 h-5 sm:w-7 sm:h-7" /> Brilhante! +{earnedXP} XP
+                {levelUpData.leveledUp && <span className="ml-1 sm:ml-2 bg-white/20 px-2 py-0.5 sm:px-3 sm:py-1 rounded-full text-xs sm:text-sm">Nível Up! +{levelUpData.earnedCoins} 🪙</span>}
               </>
             ) : (
-              <><XCircle size={28} /> Tente novamente!</>
+              <><XCircle className="w-5 h-5 sm:w-7 sm:h-7" /> Tente novamente!</>
             )}
           </motion.div>
         )}
       </AnimatePresence>
 
-      <div className="flex gap-4 sm:gap-8 mt-4">
+      <div className="flex gap-1.5 sm:gap-8 mt-2 sm:mt-4">
         {slotsConfig.map((config, slotIndex) => {
           const item = equation[slotIndex];
           // Slot is active if it's the first empty slot

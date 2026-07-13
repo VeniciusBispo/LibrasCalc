@@ -95,7 +95,7 @@ export const PremiumDraggableCard: React.FC<PremiumDraggableCardProps> = ({
         rounded-2xl border-2 ${borderAccent}
         transition-all overflow-hidden select-none
         shadow-card-3d
-        ${isInSlot ? 'w-full h-full' : (isNumber ? 'w-[5.5rem] h-[7.5rem]' : (gifInfo?.aspect === 'landscape' ? 'w-[14rem] h-[11rem]' : 'w-[8.5rem] h-[11rem]'))}
+        ${isInSlot ? 'w-full h-full' : (isNumber ? 'w-14 h-20 sm:w-[5.5rem] sm:h-[7.5rem]' : (gifInfo?.aspect === 'landscape' ? 'w-[5.5rem] h-20 sm:w-[14rem] sm:h-[11rem]' : 'w-[4.5rem] h-20 sm:w-[8.5rem] sm:h-[11rem]'))}
         focus:outline-none focus-visible:ring-4 focus-visible:ring-blue-500 focus-visible:ring-offset-2
         ${disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-grab active:cursor-grabbing'}
         ${bgClass}
@@ -109,7 +109,7 @@ export const PremiumDraggableCard: React.FC<PremiumDraggableCardProps> = ({
           alt=""
           loading="lazy"
           aria-hidden="true"
-          className="w-full h-full object-contain p-1.5 pointer-events-none drop-shadow-sm"
+          className="w-full h-full object-contain p-1 sm:p-1.5 pointer-events-none drop-shadow-sm"
         />
       )}
 
@@ -131,10 +131,10 @@ export const PremiumDraggableCard: React.FC<PremiumDraggableCardProps> = ({
           </div>
 
           {/* Badge do símbolo no canto superior direito */}
-          <div className="absolute top-1.5 right-1.5 z-10 pointer-events-none">
+          <div className="absolute top-1 right-1 sm:top-1.5 sm:right-1.5 z-10 pointer-events-none">
             <span className="
-              bg-white/90 backdrop-blur-sm text-[#1a385c] font-black text-xs
-              w-6 h-6 flex items-center justify-center
+              bg-white/90 backdrop-blur-sm text-[#1a385c] font-black text-[0.6rem] sm:text-xs
+              w-4 h-4 sm:w-6 sm:h-6 flex items-center justify-center
               rounded-full shadow-md border border-white/50
             ">
               {opInfo.symbol}
@@ -142,10 +142,10 @@ export const PremiumDraggableCard: React.FC<PremiumDraggableCardProps> = ({
           </div>
 
           {/* Label da operação na parte inferior */}
-          <div className="absolute bottom-0 left-0 right-0 z-10 pointer-events-none pb-1.5 pt-4 bg-gradient-to-t from-black/60 to-transparent">
+          <div className="absolute bottom-0 left-0 right-0 z-10 pointer-events-none pb-1 pt-3 sm:pb-1.5 sm:pt-4 bg-gradient-to-t from-black/60 to-transparent">
             <span className="
-              block text-center text-white font-black text-[0.55rem]
-              uppercase tracking-[0.15em] drop-shadow-[0_1px_2px_rgba(0,0,0,0.8)]
+              block text-center text-white font-black text-[0.4rem] sm:text-[0.55rem]
+              uppercase tracking-[0.1em] sm:tracking-[0.15em] drop-shadow-[0_1px_2px_rgba(0,0,0,0.8)]
             ">
               {opInfo.label}
             </span>

@@ -194,7 +194,7 @@ function App() {
   const themeClass = activeTheme.replace('_', '-');
 
   return (
-    <div className={`flex h-screen w-full flex-col font-sans items-center py-6 px-10 transition-colors duration-1000 ${themeClass}`}>
+    <div className={`flex h-screen w-full flex-col font-sans items-center p-2 sm:py-6 sm:px-10 transition-colors duration-1000 ${themeClass}`}>
       <StoreModal isOpen={isStoreOpen} onClose={() => setIsStoreOpen(false)} />
       <RankingModal isOpen={isRankingOpen} onClose={() => setIsRankingOpen(false)} />
       <ProfileModal isOpen={isProfileOpen} onClose={() => setIsProfileOpen(false)} />
@@ -206,41 +206,42 @@ function App() {
             initial={{ opacity: 0, y: -50 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -50 }}
-            className="fixed top-6 z-50 bg-gradient-to-r from-yellow-400 to-amber-500 text-white font-black px-6 py-3 rounded-full shadow-lg border-2 border-yellow-200 flex items-center gap-3"
+            className="fixed top-6 z-50 bg-gradient-to-r from-yellow-400 to-amber-500 text-white font-black px-4 py-2 sm:px-6 sm:py-3 rounded-full shadow-lg border-2 border-yellow-200 flex items-center gap-3 text-sm sm:text-base max-w-[90%] text-center"
           >
-            <LucideIcons.Trophy size={24} />
+            <LucideIcons.Trophy size={20} className="sm:w-6 sm:h-6 shrink-0" />
             {bonusMessage}
-            <button onClick={() => setBonusMessage(null)} className="ml-4 p-1 bg-black/10 rounded-full hover:bg-black/20"><LucideIcons.X size={16} /></button>
+            <button onClick={() => setBonusMessage(null)} className="ml-2 sm:ml-4 p-1 bg-black/10 rounded-full hover:bg-black/20 shrink-0"><LucideIcons.X size={16} /></button>
           </motion.div>
         )}
       </AnimatePresence>
 
       {/* Skeuomorphic Wooden Tablet Container */}
-      <div className="w-full max-w-7xl h-full flex flex-col bg-wood-pattern rounded-[3rem] shadow-wood-deep overflow-hidden border-t-2 border-l-2 border-white/50 relative">
+      <div className="w-full max-w-7xl h-full flex flex-col bg-wood-pattern rounded-3xl sm:rounded-[3rem] shadow-wood-deep overflow-hidden border-t-2 border-l-2 border-white/50 relative">
 
         {/* White Digital Header inside the tablet */}
-        <header className="flex w-full justify-between items-center px-10 py-6 bg-white/95 backdrop-blur-md shadow-sm z-10 border-b border-slate-200">
+        <header className="flex w-full justify-between items-center px-3 py-3 sm:px-10 sm:py-6 bg-white/95 backdrop-blur-md shadow-sm z-10 border-b border-slate-200">
 
           {/* Left: Logo */}
-          <div className="flex items-center gap-4">
-            <div className="p-2 bg-[#2b5585] text-white rounded-xl shadow-inner-soft">
-              <Sparkles size={24} strokeWidth={2} />
+          <div className="flex items-center gap-2 sm:gap-4">
+            <div className="p-1.5 sm:p-2 bg-[#2b5585] text-white rounded-lg sm:rounded-xl shadow-inner-soft">
+              <Sparkles size={16} className="sm:w-6 sm:h-6" strokeWidth={2} />
             </div>
-            <h1 className="text-2xl font-black text-[#1a385c] tracking-tight">
-              Operações Matemáticas <span className="text-[#3b82f6]">em Libras</span>
+            <h1 className="text-xs sm:text-2xl font-black text-[#1a385c] tracking-tight leading-tight">
+              Operações <span className="hidden sm:inline">Matemáticas</span><br className="sm:hidden" />
+              <span className="text-[#3b82f6]">em Libras</span>
             </h1>
           </div>
 
           {/* Center: Hand Icon */}
-          <div className="absolute left-1/2 -translate-x-1/2 flex items-center justify-center bg-white border-2 border-slate-100 rounded-full p-3 shadow-md -bottom-6">
-            <Hand size={32} className="text-[#7d9ebc]" strokeWidth={2} />
-            <Sparkles size={16} className="absolute -top-1 -right-1 text-amber-400" />
+          <div className="absolute left-1/2 -translate-x-1/2 flex items-center justify-center bg-white border-2 border-slate-100 rounded-full p-1.5 sm:p-3 shadow-md -bottom-4 sm:-bottom-6">
+            <Hand size={18} className="sm:w-8 sm:h-8 text-[#7d9ebc]" strokeWidth={2} />
+            <Sparkles size={10} className="sm:w-4 sm:h-4 absolute -top-1 -right-1 text-amber-400" />
           </div>
 
           {/* Right: User, Progress, XP, Coins */}
-          <div className="flex items-center gap-6">
+          <div className="flex items-center gap-2 sm:gap-6">
 
-            <div className="flex flex-col gap-1 w-32 hidden sm:flex">
+            <div className="flex flex-col gap-1 w-32 hidden lg:flex">
               <div className="flex justify-between items-center text-[10px] text-slate-400 font-bold uppercase tracking-wider">
                 <span>Nível {level}</span>
                 <span>Nível {level + 1}</span>
@@ -253,44 +254,44 @@ function App() {
               </div>
             </div>
 
-            <div className="flex items-center gap-2 px-4 py-2 bg-slate-100/80 rounded-full shadow-inner-soft border border-slate-200/50">
-              <div className="bg-gradient-to-br from-yellow-300 to-yellow-500 text-yellow-900 rounded-full p-1 shadow-sm border border-yellow-200">
-                <Coins size={12} className="m-[2px]" strokeWidth={3} />
+            <div className="flex items-center gap-1 sm:gap-2 px-2 py-1 sm:px-4 sm:py-2 bg-slate-100/80 rounded-full shadow-inner-soft border border-slate-200/50">
+              <div className="bg-gradient-to-br from-yellow-300 to-yellow-500 text-yellow-900 rounded-full p-0.5 sm:p-1 shadow-sm border border-yellow-200">
+                <Coins size={10} className="sm:w-3 sm:h-3 m-[1px] sm:m-[2px]" strokeWidth={3} />
               </div>
-              <span className="font-black text-slate-700 text-lg">{coins}</span>
+              <span className="font-black text-slate-700 text-xs sm:text-lg">{coins}</span>
             </div>
 
-            <div className="flex items-center gap-2 px-4 py-2 bg-slate-100/80 rounded-full shadow-inner-soft border border-slate-200/50">
+            <div className="hidden md:flex items-center gap-2 px-4 py-2 bg-slate-100/80 rounded-full shadow-inner-soft border border-slate-200/50">
               <div className="bg-gradient-to-br from-amber-300 to-amber-500 text-amber-900 rounded-full p-1 shadow-sm border border-amber-200">
                 <span className="text-[10px] font-black px-1">XP</span>
               </div>
               <span className="font-black text-slate-700 text-lg">{xp}</span>
             </div>
 
-            <div className="flex items-center gap-3 pl-4 border-l-2 border-slate-200/60">
+            <div className="flex items-center gap-1.5 sm:gap-3 pl-1.5 sm:pl-4 border-l-2 border-slate-200/60">
               <button
                 onClick={() => setIsRankingOpen(true)}
-                className="bg-indigo-100 text-indigo-600 hover:bg-indigo-200 p-2.5 rounded-full transition-all shadow-inner-soft mr-2 flex items-center gap-2 font-bold px-4"
+                className="bg-indigo-100 text-indigo-600 hover:bg-indigo-200 p-1.5 sm:p-2.5 rounded-full transition-all shadow-inner-soft mr-0 sm:mr-2 flex items-center gap-2 font-bold sm:px-4"
               >
-                <LucideIcons.Trophy size={20} strokeWidth={2.5} />
-                <span className="text-sm">Ranking</span>
+                <LucideIcons.Trophy size={16} className="sm:w-5 sm:h-5" strokeWidth={2.5} />
+                <span className="hidden sm:inline text-sm">Ranking</span>
               </button>
               <button
                 onClick={() => setIsStoreOpen(true)}
-                className="bg-amber-100 text-amber-600 hover:bg-amber-200 p-2.5 rounded-full transition-all shadow-inner-soft mr-2"
+                className="bg-amber-100 text-amber-600 hover:bg-amber-200 p-1.5 sm:p-2.5 rounded-full transition-all shadow-inner-soft mr-0 sm:mr-2"
               >
-                <ShoppingCart size={20} strokeWidth={2.5} />
+                <ShoppingCart size={16} className="sm:w-5 sm:h-5" strokeWidth={2.5} />
               </button>
-              <div className="flex flex-col items-end">
+              <div className="hidden sm:flex flex-col items-end">
                 <span className="text-slate-500 font-medium text-xs leading-none mb-1">Olá,</span>
                 <span className="text-[#1a385c] font-black text-lg leading-none">{username}</span>
               </div>
               <div 
                 onClick={() => setIsProfileOpen(true)}
-                className="w-12 h-12 rounded-full bg-slate-100 border-[3px] border-white shadow-md overflow-hidden flex items-center justify-center cursor-pointer hover:scale-105 hover:shadow-lg transition-all ring-2 ring-transparent hover:ring-blue-400"
+                className="w-8 h-8 sm:w-12 sm:h-12 rounded-full bg-slate-100 border-[2px] sm:border-[3px] border-white shadow-md overflow-hidden flex items-center justify-center cursor-pointer hover:scale-105 hover:shadow-lg transition-all ring-2 ring-transparent hover:ring-blue-400"
               >
                 <AnimatedIcon effect={activeIconItem?.effect}>
-                  <UserIconComponent size={28} className={activeIconItem?.color || 'text-slate-500'} strokeWidth={2.5} />
+                  <UserIconComponent size={20} className={`sm:w-7 sm:h-7 ${activeIconItem?.color || 'text-slate-500'}`} strokeWidth={2.5} />
                 </AnimatedIcon>
               </div>
             </div>
@@ -299,8 +300,8 @@ function App() {
         </header>
 
         {/* Main Board Area */}
-        <main className="flex-1 flex justify-center p-8 relative overflow-y-auto z-0">
-          <div className="w-full max-w-7xl flex flex-col items-center gap-6">
+        <main className="flex-1 flex justify-center p-2 sm:p-8 relative overflow-y-auto overflow-x-hidden z-0">
+          <div className="w-full max-w-7xl flex flex-col items-center gap-4 sm:gap-6">
             <EquationBoard />
             <CardTray mode="all" />
           </div>
