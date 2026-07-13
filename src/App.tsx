@@ -7,6 +7,7 @@ import * as LucideIcons from 'lucide-react';
 import { motion, AnimatePresence } from 'framer-motion';
 import { StoreModal } from '@/components/StoreModal';
 import { RankingModal } from '@/components/RankingModal';
+import { ProfileModal } from '@/components/ProfileModal';
 import { shopItems } from '@/store/shopItems';
 import { AnimatedIcon } from '@/components/AnimatedIcon';
 
@@ -18,6 +19,7 @@ function App() {
   const [loginError, setLoginError] = useState<string | null>(null);
   const [isStoreOpen, setIsStoreOpen] = useState(false);
   const [isRankingOpen, setIsRankingOpen] = useState(false);
+  const [isProfileOpen, setIsProfileOpen] = useState(false);
   const [bonusMessage, setBonusMessage] = useState<string | null>(null);
 
   useEffect(() => {
@@ -161,6 +163,7 @@ function App() {
     <div className={`flex h-screen w-full flex-col font-sans items-center py-6 px-10 transition-colors duration-1000 ${themeClass}`}>
       <StoreModal isOpen={isStoreOpen} onClose={() => setIsStoreOpen(false)} />
       <RankingModal isOpen={isRankingOpen} onClose={() => setIsRankingOpen(false)} />
+      <ProfileModal isOpen={isProfileOpen} onClose={() => setIsProfileOpen(false)} />
 
       {/* Top 3 Bonus Toast */}
       <AnimatePresence>
@@ -247,9 +250,11 @@ function App() {
               <div className="flex flex-col items-end">
                 <span className="text-slate-500 font-medium text-xs leading-none mb-1">Olá,</span>
                 <span className="text-[#1a385c] font-black text-lg leading-none">{username}</span>
-                <button onClick={() => logout()} className="text-[10px] font-bold text-red-500 hover:text-red-600 uppercase tracking-wider mt-0.5">Sair</button>
               </div>
-              <div className="w-12 h-12 rounded-full bg-slate-100 border-[3px] border-white shadow-md overflow-hidden flex items-center justify-center cursor-pointer hover:scale-105 hover:shadow-lg transition-all">
+              <div 
+                onClick={() => setIsProfileOpen(true)}
+                className="w-12 h-12 rounded-full bg-slate-100 border-[3px] border-white shadow-md overflow-hidden flex items-center justify-center cursor-pointer hover:scale-105 hover:shadow-lg transition-all ring-2 ring-transparent hover:ring-blue-400"
+              >
                 <AnimatedIcon effect={activeIconItem?.effect}>
                   <UserIconComponent size={28} className={activeIconItem?.color || 'text-slate-500'} strokeWidth={2.5} />
                 </AnimatedIcon>
