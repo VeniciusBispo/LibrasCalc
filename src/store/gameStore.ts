@@ -216,7 +216,7 @@ export const useGameStore = create<GameState>()(
       },
 
       syncToDatabase: async () => {
-        const { userId, username, level, coins, activeIcon } = get();
+        const { userId, username, level, xp, coins, activeIcon } = get();
         if (!userId || !username) return;
         
         try {
@@ -225,7 +225,7 @@ export const useGameStore = create<GameState>()(
             headers: {
               'Content-Type': 'application/json'
             },
-            body: JSON.stringify({ userId, username, level, coins, activeIcon })
+            body: JSON.stringify({ userId, username, level, xp, coins, activeIcon })
           });
         } catch (error) {
           console.error("API sync error:", error);

@@ -41,8 +41,8 @@ export const handler: Handler = async (event, context) => {
         }
       }
 
-      // 2. Reset level and XP for all users
-      await usersCollection.updateMany({}, { $set: { level: 1, xp: 0 } });
+      // 2. Removed the level and XP reset so users keep their progress!
+      // await usersCollection.updateMany({}, { $set: { level: 1, xp: 0 } });
 
       // 3. Set the new nextResetTime
       nextResetTime = now + RESET_INTERVAL;
