@@ -24,9 +24,9 @@ export const shopItems: ShopItem[] = [
   { id: 'icon_crown', name: 'Coroa', category: 'icons', cost: 15, iconName: 'Crown', description: 'Realeza matemática', color: 'text-yellow-500', effect: 'float' },
 
   // --- Themes ---
-  { id: 'theme_wood', name: 'Madeira (Padrão)', category: 'themes', cost: 0, description: 'Visual clássico de madeira' },
-  { id: 'theme_ocean', name: 'Oceano Profundo', category: 'themes', cost: 10, description: 'Azul relaxante do fundo do mar' },
-  { id: 'theme_space', name: 'Espaço Sideral', category: 'themes', cost: 20, iconName: 'Box', description: 'Tema escuro estrelado' },
+  { id: 'theme_wood', name: 'Madeira (Padrão)', category: 'themes', cost: 0, iconName: 'Trees', description: 'Visual clássico de madeira' },
+  { id: 'theme_ocean', name: 'Oceano Profundo', category: 'themes', cost: 10, iconName: 'Waves', description: 'Azul relaxante do fundo do mar' },
+  { id: 'theme_space', name: 'Espaço Sideral', category: 'themes', cost: 20, iconName: 'Stars', description: 'Tema escuro estrelado' },
   { id: 'theme_candy', name: 'Mundo Doce', category: 'themes', cost: 50, iconName: 'Lollipop', description: 'Rosa pastel com poás brancos' },
   { id: 'theme_jungle', name: 'Floresta Densa', category: 'themes', cost: 150, iconName: 'TreePine', description: 'Verde rústico e folhagens escurecidas' },
   { id: 'theme_cyberpunk', name: 'Cyberpunk', category: 'themes', cost: 300, iconName: 'Cpu', description: 'Neon roxo e matrizes de dados' },
