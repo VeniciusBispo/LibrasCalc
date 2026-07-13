@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { EquationBoard } from '@/features/EquationBoard';
 import { CardTray } from '@/features/CardTray';
 import { useGameStore } from '@/store/gameStore';
@@ -11,7 +11,7 @@ import { shopItems } from '@/store/shopItems';
 import { AnimatedIcon } from '@/components/AnimatedIcon';
 
 function App() {
-  const { xp, level, coins, username, setUsername, activeIcon, activeTheme, userId, addXP } = useGameStore();
+  const { xp, level, coins, username, setUsername, activeIcon, activeTheme, userId } = useGameStore();
   const [inputValue, setInputValue] = useState('');
   const [isStoreOpen, setIsStoreOpen] = useState(false);
   const [isRankingOpen, setIsRankingOpen] = useState(false);

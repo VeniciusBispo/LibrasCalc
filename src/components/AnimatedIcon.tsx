@@ -45,7 +45,7 @@ export const AnimatedIcon: React.FC<AnimatedIconProps> = ({ children, effect = '
   return (
     <motion.div 
       className={`inline-flex items-center justify-center ${className}`}
-      animate={getAnimation()}
+      animate={getAnimation() as any}
       // @ts-ignore
       style={effect === 'pulse' ? { originX: 0.5, originY: 0.5 } : {}}
     >
