@@ -25,51 +25,81 @@
 }
 
 @layer base {
-  :root {
-    --theme-main-bg: #e6d3b3;
-    --theme-main-pattern: repeating-linear-gradient(45deg, transparent, transparent 10px, rgba(207, 164, 116, 0.05) 10px, rgba(207, 164, 116, 0.05) 20px), linear-gradient(to right, rgba(255,255,255,0.4) 0%, rgba(255,255,255,0) 50%, rgba(207,164,116,0.3) 100%);
+  :root { /* theme_wood */
+    --theme-main-bg: #8b5a2b;
+    --theme-main-pattern: 
+      repeating-linear-gradient(45deg, rgba(0, 0, 0, 0.05) 0px, rgba(0, 0, 0, 0.05) 2px, transparent 2px, transparent 8px),
+      repeating-linear-gradient(-45deg, rgba(255, 255, 255, 0.05) 0px, rgba(255, 255, 255, 0.05) 2px, transparent 2px, transparent 12px),
+      linear-gradient(to right, #6b4226 0%, #8b5a2b 50%, #6b4226 100%);
     --theme-main-size: auto;
-    --theme-dark-bg: #dcb388;
-    --theme-dark-pattern: repeating-linear-gradient(45deg, transparent, transparent 8px, rgba(160, 110, 70, 0.08) 8px, rgba(160, 110, 70, 0.08) 16px);
+    --theme-dark-bg: #5a3518;
+    --theme-dark-pattern: repeating-linear-gradient(45deg, rgba(0, 0, 0, 0.1) 0px, rgba(0, 0, 0, 0.1) 2px, transparent 2px, transparent 8px);
   }
   
   .theme-ocean {
-    --theme-main-bg: #4a7c82;
-    --theme-main-pattern: repeating-linear-gradient(45deg, transparent, transparent 10px, rgba(255, 255, 255, 0.1) 10px, rgba(255, 255, 255, 0.1) 20px), radial-gradient(circle at 50% 0%, rgba(255,255,255,0.2) 0%, transparent 70%);
-    --theme-main-size: auto;
-    --theme-dark-bg: #2d555c;
-    --theme-dark-pattern: repeating-linear-gradient(45deg, transparent, transparent 8px, rgba(0, 0, 0, 0.1) 8px, rgba(0, 0, 0, 0.1) 16px);
+    --theme-main-bg: #002e4f;
+    --theme-main-pattern: 
+      radial-gradient(circle at 50% -20%, rgba(0, 180, 255, 0.6) 0%, transparent 60%),
+      radial-gradient(circle at 10% 80%, rgba(255,255,255,0.5) 1px, transparent 2px),
+      radial-gradient(circle at 20% 60%, rgba(255,255,255,0.4) 2px, transparent 3px),
+      radial-gradient(circle at 35% 30%, rgba(255,255,255,0.6) 1.5px, transparent 2.5px),
+      radial-gradient(circle at 50% 90%, rgba(255,255,255,0.3) 2.5px, transparent 3.5px),
+      radial-gradient(circle at 65% 50%, rgba(255,255,255,0.5) 1px, transparent 2px),
+      radial-gradient(circle at 80% 20%, rgba(255,255,255,0.4) 2px, transparent 3px),
+      radial-gradient(circle at 90% 70%, rgba(255,255,255,0.6) 1.5px, transparent 2.5px),
+      linear-gradient(180deg, #005a8f 0%, #001220 100%);
+    --theme-main-size: 100% 100%, 80px 80px, 120px 120px, 150px 150px, 200px 200px, 90px 90px, 130px 130px, 170px 170px, 100% 100%;
+    --theme-dark-bg: #001220;
+    --theme-dark-pattern: none;
   }
   
   .theme-space {
-    --theme-main-bg: #1c1c38;
-    --theme-main-pattern: radial-gradient(circle at 20% 30%, rgba(255,255,255,0.3) 2px, transparent 2px), radial-gradient(circle at 70% 60%, rgba(255,255,255,0.3) 2px, transparent 2px), radial-gradient(circle at 40% 80%, rgba(255,255,255,0.3) 2px, transparent 2px);
-    --theme-main-size: 100px 100px;
-    --theme-dark-bg: #101024;
+    --theme-main-bg: #090a0f;
+    --theme-main-pattern: 
+      radial-gradient(circle at 10% 20%, rgba(255,255,255,0.9) 1px, transparent 1px),
+      radial-gradient(circle at 30% 60%, rgba(255,255,255,0.7) 1.5px, transparent 2px),
+      radial-gradient(circle at 50% 40%, rgba(255,255,255,1) 1px, transparent 1.5px),
+      radial-gradient(circle at 70% 80%, rgba(255,255,255,0.5) 2px, transparent 2.5px),
+      radial-gradient(circle at 90% 10%, rgba(255,255,255,0.8) 1px, transparent 1.5px),
+      radial-gradient(circle at 80% 50%, rgba(255,255,255,0.6) 1.5px, transparent 2px),
+      linear-gradient(135deg, #0f172a 0%, #000000 100%);
+    --theme-main-size: 150px 150px, 200px 200px, 100px 100px, 250px 250px, 120px 120px, 180px 180px, 100% 100%;
+    --theme-dark-bg: #000000;
     --theme-dark-pattern: none;
   }
 
   .theme-candy {
     --theme-main-bg: #ffb7b2;
-    --theme-main-pattern: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.4) 10px, transparent 11px), radial-gradient(circle at 70% 70%, rgba(255,255,255,0.4) 10px, transparent 11px);
-    --theme-main-size: 60px 60px;
+    --theme-main-pattern: 
+      repeating-linear-gradient(45deg, rgba(255, 255, 255, 0.4) 0, rgba(255, 255, 255, 0.4) 20px, transparent 20px, transparent 40px),
+      linear-gradient(135deg, #ffb7b2 0%, #ffdac1 100%);
+    --theme-main-size: auto;
     --theme-dark-bg: #ff9a9e;
-    --theme-dark-pattern: none;
+    --theme-dark-pattern: repeating-linear-gradient(-45deg, rgba(255, 255, 255, 0.3) 0, rgba(255, 255, 255, 0.3) 10px, transparent 10px, transparent 20px);
   }
   
   .theme-jungle {
-    --theme-main-bg: #2e5339;
-    --theme-main-pattern: repeating-linear-gradient(45deg, transparent, transparent 15px, rgba(0, 0, 0, 0.1) 15px, rgba(0, 0, 0, 0.1) 30px);
-    --theme-main-size: auto;
-    --theme-dark-bg: #1c3624;
+    --theme-main-bg: #1e3f20;
+    --theme-main-pattern: 
+      radial-gradient(circle at 20% 20%, rgba(76, 175, 80, 0.2) 0%, transparent 40%),
+      radial-gradient(circle at 80% 80%, rgba(76, 175, 80, 0.15) 0%, transparent 50%),
+      radial-gradient(circle at 50% 50%, rgba(0, 0, 0, 0.3) 0%, transparent 70%),
+      repeating-linear-gradient(45deg, rgba(0, 0, 0, 0.05) 0, rgba(0, 0, 0, 0.05) 5px, transparent 5px, transparent 10px),
+      linear-gradient(to bottom, #2e5339 0%, #152916 100%);
+    --theme-main-size: 100% 100%, 100% 100%, 100% 100%, auto, 100% 100%;
+    --theme-dark-bg: #101f11;
     --theme-dark-pattern: none;
   }
   
   .theme-cyberpunk {
-    --theme-main-bg: #1a0b2e;
-    --theme-main-pattern: linear-gradient(0deg, rgba(255,0,128,0.2) 1px, transparent 1px), linear-gradient(90deg, rgba(255,0,128,0.2) 1px, transparent 1px);
-    --theme-main-size: 20px 20px;
-    --theme-dark-bg: #0b0213;
+    --theme-main-bg: #090014;
+    --theme-main-pattern: 
+      linear-gradient(0deg, rgba(255,0,128,0.3) 1px, transparent 1px), 
+      linear-gradient(90deg, rgba(255,0,128,0.3) 1px, transparent 1px),
+      radial-gradient(circle at 50% 0%, rgba(0, 255, 255, 0.2) 0%, transparent 50%),
+      linear-gradient(to bottom, #1a0b2e 0%, #05000a 100%);
+    --theme-main-size: 40px 40px, 40px 40px, 100% 100%, 100% 100%;
+    --theme-dark-bg: #05000a;
     --theme-dark-pattern: none;
   }
 
