@@ -21,31 +21,29 @@ function App() {
     // Top 3 Weekly Bonus Logic
     const checkWeeklyBonus = async () => {
       if (!userId) return;
-      
+
       const lastBonusDate = localStorage.getItem('lastBonusDate');
       const today = new Date().toDateString();
       if (lastBonusDate === today) return;
 
       try {
         const response = await fetch('/api/getRanking');
-        
+
         if (!response.ok) return;
 
         // Se estivermos rodando localmente no Vite (npm run dev) sem o Netlify Dev, 
         // a requisição pode retornar o index.html em vez de JSON.
         const contentType = response.headers.get("content-type");
         if (!contentType || !contentType.includes("application/json")) {
-          console.warn("Aviso: A rota de API não retornou JSON. Ignorando bônus no ambiente local/Netlify erro.");
+          console.warn("Aviso: A rota de API não retornou JSON. Ignorando bônus no ambiente local.");
           return;
         }
 
-        const text = await response.text();
-        if (!text) return;
-        const data = JSON.parse(text);
+        const data = await response.json();
 
         let rank = 0;
         let isTop3 = false;
-        
+
         const top3 = (data.ranking || []).slice(0, 3);
         top3.forEach((player: any) => {
           rank++;
@@ -62,8 +60,15 @@ function App() {
         console.error("Erro ao checar bônus:", err);
       }
     };
-    
+
     checkWeeklyBonus();
+  }, [userId]);
+
+  // Fetch updated user data from server (to sync coins and level resets)
+  useEffect(() => {
+    if (userId) {
+      useGameStore.getState().fetchUserData();
+    }
   }, [userId]);
 
   const activeIconItem = shopItems.find(i => i.id === activeIcon);
@@ -73,7 +78,7 @@ function App() {
   if (!username) {
     return (
       <div className="flex h-screen w-full flex-col items-center justify-center font-sans p-6 bg-transparent">
-        <motion.div 
+        <motion.div
           initial={{ opacity: 0, scale: 0.9, y: 20 }}
           animate={{ opacity: 1, scale: 1, y: 0 }}
           className="bg-wood-pattern p-12 rounded-[3rem] shadow-wood-deep w-full max-w-md flex flex-col items-center gap-8 text-center border-t border-l border-white/40"
@@ -85,8 +90,8 @@ function App() {
             <h1 className="text-4xl font-black text-[#2b5585] tracking-tight mb-3 drop-shadow-sm">Bem-vindo!</h1>
             <p className="text-[#3c6b9d] font-bold">Qual é o seu nome, jovem aventureiro?</p>
           </div>
-          
-          <form 
+
+          <form
             className="w-full flex flex-col gap-5 mt-2"
             onSubmit={(e) => {
               e.preventDefault();
@@ -127,11 +132,11 @@ function App() {
     <div className={`flex h-screen w-full flex-col font-sans items-center py-6 px-10 transition-colors duration-1000 ${themeClass}`}>
       <StoreModal isOpen={isStoreOpen} onClose={() => setIsStoreOpen(false)} />
       <RankingModal isOpen={isRankingOpen} onClose={() => setIsRankingOpen(false)} />
-      
+
       {/* Top 3 Bonus Toast */}
       <AnimatePresence>
         {bonusMessage && (
-          <motion.div 
+          <motion.div
             initial={{ opacity: 0, y: -50 }}
             animate={{ opacity: 1, y: 0 }}
             exit={{ opacity: 0, y: -50 }}
@@ -146,10 +151,10 @@ function App() {
 
       {/* Skeuomorphic Wooden Tablet Container */}
       <div className="w-full max-w-7xl h-full flex flex-col bg-wood-pattern rounded-[3rem] shadow-wood-deep overflow-hidden border-t-2 border-l-2 border-white/50 relative">
-        
+
         {/* White Digital Header inside the tablet */}
         <header className="flex w-full justify-between items-center px-10 py-4 bg-white/95 backdrop-blur-md shadow-sm z-10 border-b border-slate-200">
-          
+
           {/* Left: Logo */}
           <div className="flex items-center gap-4">
             <div className="p-2 bg-[#2b5585] text-white rounded-xl shadow-inner-soft">
@@ -159,7 +164,7 @@ function App() {
               Operações Matemáticas <span className="text-[#3b82f6]">em Libras</span>
             </h1>
           </div>
-          
+
           {/* Center: Hand Icon */}
           <div className="absolute left-1/2 -translate-x-1/2 flex items-center justify-center bg-white border-2 border-slate-100 rounded-full p-3 shadow-md -bottom-6">
             <Hand size={32} className="text-[#7d9ebc]" strokeWidth={2} />
@@ -168,15 +173,15 @@ function App() {
 
           {/* Right: User, Progress, XP, Coins */}
           <div className="flex items-center gap-6">
-            
+
             <div className="flex flex-col gap-1 w-32 hidden sm:flex">
               <div className="flex justify-between items-center text-[10px] text-slate-400 font-bold uppercase tracking-wider">
                 <span>Nível {level}</span>
                 <span>Nível {level + 1}</span>
               </div>
               <div className="w-full h-2 bg-slate-200 rounded-full overflow-hidden shadow-inner">
-                <div 
-                  className="h-full bg-blue-500 rounded-full shadow-[inset_0_-1px_2px_rgba(0,0,0,0.2)] transition-all duration-500" 
+                <div
+                  className="h-full bg-blue-500 rounded-full shadow-[inset_0_-1px_2px_rgba(0,0,0,0.2)] transition-all duration-500"
                   style={{ width: `${xpProgress}%` }}
                 ></div>
               </div>
@@ -196,30 +201,30 @@ function App() {
               <span className="font-black text-slate-700 text-lg">{xp}</span>
             </div>
 
-              <div className="flex items-center gap-3 pl-4 border-l-2 border-slate-200/60">
-                <button 
-                  onClick={() => setIsRankingOpen(true)}
-                  className="bg-indigo-100 text-indigo-600 hover:bg-indigo-200 p-2.5 rounded-full transition-all shadow-inner-soft mr-2 flex items-center gap-2 font-bold px-4"
-                >
-                  <LucideIcons.Trophy size={20} strokeWidth={2.5} />
-                  <span className="text-sm">Ranking</span>
-                </button>
-                <button 
-                  onClick={() => setIsStoreOpen(true)}
-                  className="bg-amber-100 text-amber-600 hover:bg-amber-200 p-2.5 rounded-full transition-all shadow-inner-soft mr-2"
-                >
-                  <ShoppingCart size={20} strokeWidth={2.5} />
-                </button>
-                <div className="flex flex-col items-end">
-                  <span className="text-slate-500 font-medium text-xs leading-none mb-1">Olá,</span>
-                  <span className="text-[#1a385c] font-black text-lg leading-none">{username}</span>
-                </div>
-                <div className="w-12 h-12 rounded-full bg-slate-100 border-[3px] border-white shadow-md overflow-hidden flex items-center justify-center cursor-pointer hover:scale-105 hover:shadow-lg transition-all">
-                  <AnimatedIcon effect={activeIconItem?.effect}>
-                    <UserIconComponent size={28} className={activeIconItem?.color || 'text-slate-500'} strokeWidth={2.5} />
-                  </AnimatedIcon>
-                </div>
+            <div className="flex items-center gap-3 pl-4 border-l-2 border-slate-200/60">
+              <button
+                onClick={() => setIsRankingOpen(true)}
+                className="bg-indigo-100 text-indigo-600 hover:bg-indigo-200 p-2.5 rounded-full transition-all shadow-inner-soft mr-2 flex items-center gap-2 font-bold px-4"
+              >
+                <LucideIcons.Trophy size={20} strokeWidth={2.5} />
+                <span className="text-sm">Ranking</span>
+              </button>
+              <button
+                onClick={() => setIsStoreOpen(true)}
+                className="bg-amber-100 text-amber-600 hover:bg-amber-200 p-2.5 rounded-full transition-all shadow-inner-soft mr-2"
+              >
+                <ShoppingCart size={20} strokeWidth={2.5} />
+              </button>
+              <div className="flex flex-col items-end">
+                <span className="text-slate-500 font-medium text-xs leading-none mb-1">Olá,</span>
+                <span className="text-[#1a385c] font-black text-lg leading-none">{username}</span>
               </div>
+              <div className="w-12 h-12 rounded-full bg-slate-100 border-[3px] border-white shadow-md overflow-hidden flex items-center justify-center cursor-pointer hover:scale-105 hover:shadow-lg transition-all">
+                <AnimatedIcon effect={activeIconItem?.effect}>
+                  <UserIconComponent size={28} className={activeIconItem?.color || 'text-slate-500'} strokeWidth={2.5} />
+                </AnimatedIcon>
+              </div>
+            </div>
 
           </div>
         </header>

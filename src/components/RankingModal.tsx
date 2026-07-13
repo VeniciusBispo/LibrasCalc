@@ -22,6 +22,8 @@ export const RankingModal: React.FC<RankingModalProps> = ({ isOpen, onClose }) =
   const [players, setPlayers] = useState<Player[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
+  const [nextResetTime, setNextResetTime] = useState<number | null>(null);
+  const [timeLeftStr, setTimeLeftStr] = useState<string>('');
   const { userId } = useGameStore();
 
   useEffect(() => {
@@ -29,6 +31,22 @@ export const RankingModal: React.FC<RankingModalProps> = ({ isOpen, onClose }) =
       fetchRanking();
     }
   }, [isOpen]);
+
+  useEffect(() => {
+    if (!nextResetTime || !isOpen) return;
+    const interval = setInterval(() => {
+      const diff = nextResetTime - Date.now();
+      if (diff <= 0) {
+        setTimeLeftStr('Resetando...');
+        fetchRanking(); // Auto refresh when timer hits 0
+      } else {
+        const minutes = Math.floor(diff / 1000 / 60);
+        const seconds = Math.floor((diff / 1000) % 60);
+        setTimeLeftStr(`${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`);
+      }
+    }, 1000);
+    return () => clearInterval(interval);
+  }, [nextResetTime, isOpen]);
 
   const fetchRanking = async () => {
     setLoading(true);
@@ -58,6 +76,9 @@ export const RankingModal: React.FC<RankingModalProps> = ({ isOpen, onClose }) =
       }
 
       setPlayers(data.ranking || []);
+      if (data.nextResetTime) {
+        setNextResetTime(data.nextResetTime);
+      }
     } catch (err: any) {
       console.error(err);
       setError(err.message || "Erro ao carregar o ranking. Verifique sua conexão ou a configuração do MongoDB.");
@@ -71,27 +92,34 @@ export const RankingModal: React.FC<RankingModalProps> = ({ isOpen, onClose }) =
   return (
     <AnimatePresence>
       <div className="fixed inset-0 z-[100] flex items-center justify-center p-4">
-        <motion.div 
-          initial={{ opacity: 0 }} 
-          animate={{ opacity: 1 }} 
-          exit={{ opacity: 0 }} 
+        <motion.div
+          initial={{ opacity: 0 }}
+          animate={{ opacity: 1 }}
+          exit={{ opacity: 0 }}
           className="absolute inset-0 bg-slate-900/60 backdrop-blur-sm"
           onClick={onClose}
         />
-        
-        <motion.div 
-          initial={{ scale: 0.9, opacity: 0, y: 20 }} 
-          animate={{ scale: 1, opacity: 1, y: 0 }} 
+
+        <motion.div
+          initial={{ scale: 0.9, opacity: 0, y: 20 }}
+          animate={{ scale: 1, opacity: 1, y: 0 }}
           exit={{ scale: 0.9, opacity: 0, y: 20 }}
           className="relative w-full max-w-2xl bg-white rounded-3xl shadow-2xl overflow-hidden flex flex-col h-[70vh] border-4 border-indigo-500/20"
         >
           {/* Header */}
-          <div className="bg-gradient-to-r from-indigo-500 to-purple-600 p-6 text-white flex justify-between items-center shadow-md z-10">
+          <div className="bg-gradient-to-r from-indigo-500 to-purple-600 p-6 text-white flex justify-between items-center shadow-md z-10 relative">
             <div className="flex items-center gap-3">
               <Trophy size={32} className="text-yellow-300 drop-shadow-md" />
-              <h2 className="text-3xl font-black drop-shadow-sm">Ranking Global</h2>
+              <div className="flex flex-col">
+                <h2 className="text-3xl font-black drop-shadow-sm leading-none">Ranking Global</h2>
+                {timeLeftStr && (
+                  <span className="text-sm font-bold text-indigo-200 mt-1 flex items-center gap-1">
+                    <LucideIcons.Timer size={14} /> Reset em: {timeLeftStr}
+                  </span>
+                )}
+              </div>
             </div>
-            <button onClick={onClose} className="p-2 bg-black/10 hover:bg-black/20 rounded-full transition-colors">
+            <button onClick={onClose} className="p-2 bg-black/10 hover:bg-black/20 rounded-full transition-colors self-start">
               <X size={24} />
             </button>
           </div>
@@ -128,28 +156,28 @@ export const RankingModal: React.FC<RankingModalProps> = ({ isOpen, onClose }) =
                   const shopIcon = shopItems.find(i => i.id === player.activeIcon);
                   // @ts-ignore
                   const IconComp = shopIcon?.iconName ? LucideIcons[shopIcon.iconName] : LucideIcons.User;
-                  
+
                   let bgClass = "bg-white border-slate-200";
                   let rankColor = "text-slate-400";
-                  
+
                   if (index === 0) { bgClass = "bg-yellow-50 border-yellow-300 shadow-yellow-100"; rankColor = "text-yellow-500"; }
                   else if (index === 1) { bgClass = "bg-slate-50 border-slate-300 shadow-slate-200"; rankColor = "text-slate-500"; }
                   else if (index === 2) { bgClass = "bg-orange-50 border-orange-300 shadow-orange-100"; rankColor = "text-orange-600"; }
                   else if (isMe) { bgClass = "bg-indigo-50 border-indigo-300 shadow-indigo-100"; }
 
                   return (
-                    <motion.div 
+                    <motion.div
                       initial={{ opacity: 0, y: 10 }}
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ delay: index * 0.1 }}
-                      key={player.userId} 
+                      key={player.userId}
                       className={`flex items-center gap-4 p-4 rounded-2xl border-2 shadow-sm transition-all hover:scale-[1.01] ${bgClass} ${isMe ? 'ring-2 ring-indigo-500 ring-offset-2' : ''}`}
                     >
                       {/* Rank Position */}
                       <div className={`font-black text-2xl w-10 text-center ${rankColor}`}>
                         {index < 3 ? <Medal size={32} className="mx-auto drop-shadow-sm" /> : `#${index + 1}`}
                       </div>
-                      
+
                       {/* Avatar */}
                       <div className="w-12 h-12 rounded-full bg-slate-100 border-2 border-white shadow-sm flex items-center justify-center">
                         <AnimatedIcon effect={shopIcon?.effect}>
@@ -173,6 +201,16 @@ export const RankingModal: React.FC<RankingModalProps> = ({ isOpen, onClose }) =
                           </span>
                         </div>
                       </div>
+
+                      {/* Rewards for Top 3 */}
+                      {index < 3 && (
+                        <div className="flex items-center gap-1 bg-yellow-100 px-3 py-1.5 rounded-full border border-yellow-200">
+                          <span className="font-black text-yellow-600 text-sm">
+                            +{index === 0 ? 500 : index === 1 ? 300 : 100}
+                          </span>
+                          <LucideIcons.Coins size={14} className="text-yellow-500" />
+                        </div>
+                      )}
                     </motion.div>
                   );
                 })}

@@ -18,11 +18,45 @@ export const handler: Handler = async (event, context) => {
     await client.connect();
     const db = client.db(dbName);
     const usersCollection = db.collection('users');
+    const metaCollection = db.collection('metadata');
+
+    const RESET_INTERVAL = 30 * 60 * 1000; // 30 minutes in ms
+    const REWARDS = [500, 300, 100];
+
+    let meta = await metaCollection.findOne({ _id: 'ranking_reset' });
+    let now = Date.now();
+    let nextResetTime = meta?.nextResetTime;
+
+    if (!meta || !nextResetTime || now >= nextResetTime) {
+      // We need to trigger the reset!
+      const top3 = await usersCollection.find({}).sort({ level: -1, xp: -1 }).limit(3).project({ userId: 1 }).toArray();
+      
+      // 1. Give rewards
+      for (let i = 0; i < top3.length; i++) {
+        if (REWARDS[i]) {
+          await usersCollection.updateOne(
+            { userId: top3[i].userId }, 
+            { $inc: { coins: REWARDS[i] } }
+          );
+        }
+      }
+
+      // 2. Reset level and XP for all users
+      await usersCollection.updateMany({}, { $set: { level: 1, xp: 0 } });
+
+      // 3. Set the new nextResetTime
+      nextResetTime = now + RESET_INTERVAL;
+      await metaCollection.updateOne(
+        { _id: 'ranking_reset' },
+        { $set: { nextResetTime } },
+        { upsert: true }
+      );
+    }
 
     // Get top 10 users ordered by level descending
     const ranking = await usersCollection
       .find({})
-      .sort({ level: -1 })
+      .sort({ level: -1, xp: -1 })
       .limit(10)
       .project({ _id: 0, userId: 1, username: 1, level: 1, activeIcon: 1 })
       .toArray();
@@ -34,7 +68,7 @@ export const handler: Handler = async (event, context) => {
       headers: {
         'Content-Type': 'application/json'
       },
-      body: JSON.stringify({ ranking })
+      body: JSON.stringify({ ranking, nextResetTime })
     };
   } catch (error: any) {
     console.error("MongoDB Connection Error:", error);

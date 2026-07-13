@@ -42,6 +42,7 @@ interface GameState {
   
   // Database sync
   syncToDatabase: () => void;
+  fetchUserData: () => Promise<void>;
 }
 
 export const useGameStore = create<GameState>()(
@@ -203,6 +204,21 @@ export const useGameStore = create<GameState>()(
           });
         } catch (error) {
           console.error("API sync error:", error);
+        }
+      },
+
+      fetchUserData: async () => {
+        const { userId } = get();
+        if (!userId) return;
+        
+        try {
+          const response = await fetch(`/api/getUser?userId=${userId}`);
+          if (response.ok) {
+            const data = await response.json();
+            set({ level: data.level, xp: data.xp, coins: data.coins });
+          }
+        } catch (error) {
+          console.error("API fetch error:", error);
         }
       }
     }),
