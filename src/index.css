@@ -107,6 +107,13 @@
     @apply m-0 p-0 overflow-hidden font-sans;
     background: #3e4a59; /* Fundo embaçado de escritório simulado */
   }
+
+  button:not(:disabled),
+  [role="button"]:not(:disabled),
+  input[type="submit"]:not(:disabled),
+  input[type="button"]:not(:disabled) {
+    cursor: pointer;
+  }
 }
 
 @layer utilities {
