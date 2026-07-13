@@ -49,6 +49,30 @@
     --theme-dark-pattern: none;
   }
 
+  .theme-candy {
+    --theme-main-bg: #ffb7b2;
+    --theme-main-pattern: radial-gradient(circle at 30% 30%, rgba(255,255,255,0.4) 10px, transparent 11px), radial-gradient(circle at 70% 70%, rgba(255,255,255,0.4) 10px, transparent 11px);
+    --theme-main-size: 60px 60px;
+    --theme-dark-bg: #ff9a9e;
+    --theme-dark-pattern: none;
+  }
+  
+  .theme-jungle {
+    --theme-main-bg: #2e5339;
+    --theme-main-pattern: repeating-linear-gradient(45deg, transparent, transparent 15px, rgba(0, 0, 0, 0.1) 15px, rgba(0, 0, 0, 0.1) 30px);
+    --theme-main-size: auto;
+    --theme-dark-bg: #1c3624;
+    --theme-dark-pattern: none;
+  }
+  
+  .theme-cyberpunk {
+    --theme-main-bg: #1a0b2e;
+    --theme-main-pattern: linear-gradient(0deg, rgba(255,0,128,0.2) 1px, transparent 1px), linear-gradient(90deg, rgba(255,0,128,0.2) 1px, transparent 1px);
+    --theme-main-size: 20px 20px;
+    --theme-dark-bg: #0b0213;
+    --theme-dark-pattern: none;
+  }
+
   body {
     @apply m-0 p-0 overflow-hidden font-sans;
     background: #3e4a59; /* Fundo embaçado de escritório simulado */

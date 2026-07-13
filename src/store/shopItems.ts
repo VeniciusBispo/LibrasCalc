@@ -26,7 +26,10 @@ export const shopItems: ShopItem[] = [
   // --- Themes ---
   { id: 'theme_wood', name: 'Madeira (Padrão)', category: 'themes', cost: 0, description: 'Visual clássico de madeira' },
   { id: 'theme_ocean', name: 'Oceano Profundo', category: 'themes', cost: 10, description: 'Azul relaxante do fundo do mar' },
-  { id: 'theme_space', name: 'Espaço Sideral', category: 'themes', cost: 20, description: 'Tema escuro estrelado' },
+  { id: 'theme_space', name: 'Espaço Sideral', category: 'themes', cost: 20, iconName: 'Box', description: 'Tema escuro estrelado' },
+  { id: 'theme_candy', name: 'Mundo Doce', category: 'themes', cost: 50, iconName: 'Lollipop', description: 'Rosa pastel com poás brancos' },
+  { id: 'theme_jungle', name: 'Floresta Densa', category: 'themes', cost: 150, iconName: 'TreePine', description: 'Verde rústico e folhagens escurecidas' },
+  { id: 'theme_cyberpunk', name: 'Cyberpunk', category: 'themes', cost: 300, iconName: 'Cpu', description: 'Neon roxo e matrizes de dados' },
 
   // --- Difficulties ---
   { id: 'diff_easy', name: 'Fácil (1 a 10)', category: 'difficulties', cost: 0, description: 'Números até 10' },
