@@ -34,7 +34,7 @@ export const EquationSlot: React.FC<EquationSlotProps> = ({
       aria-label={ariaLabel}
       className={`
         relative flex items-center justify-center 
-        w-[4.2rem] h-[5.5rem] sm:w-28 sm:h-36 rounded-xl sm:rounded-3xl transition-colors duration-300
+        w-[4.5rem] h-[6.5rem] sm:w-28 sm:h-36 rounded-xl sm:rounded-3xl transition-colors duration-300
         
         /* Skeuomorphic Wood Slot (Inset shadow carving) */
         ${isEmpty ? 'bg-wood-dark-pattern shadow-wood-deep border border-[#b5835a]/50' : 'bg-transparent border-transparent'}
