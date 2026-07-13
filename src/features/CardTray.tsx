@@ -23,8 +23,8 @@ export const CardTray: React.FC<CardTrayProps> = ({ mode = 'all' }) => {
         Números em Libras
       </h3>
 
-      {/* Grid uniforme 5 colunas com scroll no mobile */}
-      <div className="grid grid-cols-5 sm:grid-cols-4 gap-1.5 sm:gap-3 justify-items-center max-h-[160px] sm:max-h-[400px] overflow-y-auto p-1 sm:p-2 scrollbar-thin scrollbar-thumb-amber-700/30 scrollbar-track-transparent">
+      {/* Grid uniforme 4 colunas com scroll no mobile */}
+      <div className="grid grid-cols-4 sm:grid-cols-4 gap-1.5 sm:gap-3 justify-items-center max-h-[180px] sm:max-h-[400px] overflow-y-auto p-1 sm:p-2 scrollbar-thin scrollbar-thumb-amber-700/30 scrollbar-track-transparent">
         {numbers.map((num) => (
           <PremiumDraggableCard
             key={`num-${num}`}

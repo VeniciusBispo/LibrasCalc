@@ -41,7 +41,7 @@ export const EquationBoard: React.FC = () => {
 
   return (
     <div 
-      className="relative flex flex-col items-center justify-center p-2 sm:p-6 w-full"
+      className="relative flex flex-col items-center justify-center p-2 pt-12 sm:p-6 w-full"
       role="region"
       aria-label="Quadro principal de equações"
     >
@@ -53,7 +53,7 @@ export const EquationBoard: React.FC = () => {
             initial={{ opacity: 0, scale: 0.5, y: -20 }}
             animate={{ opacity: 1, scale: 1, y: 0 }}
             exit={{ opacity: 0, scale: 0.8, y: -20 }}
-            className={`absolute -top-8 flex items-center gap-2 sm:gap-3 px-4 py-2 sm:px-8 sm:py-4 rounded-2xl sm:rounded-3xl font-black text-white shadow-xl text-sm sm:text-lg z-50 whitespace-nowrap ${
+            className={`absolute top-0 sm:-top-8 flex items-center gap-2 sm:gap-3 px-4 py-2 sm:px-8 sm:py-4 rounded-2xl sm:rounded-3xl font-black text-white shadow-xl text-sm sm:text-lg z-50 whitespace-nowrap ${
               status === 'success' ? 'bg-gradient-to-r from-green-400 to-emerald-500 shadow-green-500/30' : 'bg-gradient-to-r from-red-400 to-rose-500 shadow-red-500/30'
             }`}
           >
