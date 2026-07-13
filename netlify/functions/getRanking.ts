@@ -36,11 +36,17 @@ export const handler: Handler = async (event, context) => {
       },
       body: JSON.stringify({ ranking })
     };
-  } catch (error) {
-    console.error(error);
+  } catch (error: any) {
+    console.error("MongoDB Connection Error:", error);
     return {
       statusCode: 500,
-      body: JSON.stringify({ error: 'Failed to fetch ranking' })
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ 
+        error: 'Failed to fetch ranking', 
+        details: error.message || error.toString() 
+      })
     };
   }
 };

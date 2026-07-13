@@ -46,11 +46,17 @@ export const handler: Handler = async (event, context) => {
       statusCode: 200,
       body: JSON.stringify({ success: true })
     };
-  } catch (error) {
-    console.error(error);
+  } catch (error: any) {
+    console.error("MongoDB Connection Error:", error);
     return {
       statusCode: 500,
-      body: JSON.stringify({ error: 'Failed to update score' })
+      headers: {
+        'Content-Type': 'application/json'
+      },
+      body: JSON.stringify({ 
+        error: 'Failed to update score',
+        details: error.message || error.toString() 
+      })
     };
   }
 };

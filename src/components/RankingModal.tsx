@@ -43,13 +43,13 @@ export const RankingModal: React.FC<RankingModalProps> = ({ isOpen, onClose }) =
           setLoading(false);
           return;
         }
-        throw new Error(data.error || 'Failed to fetch');
+        throw new Error(data.details || data.error || 'Failed to fetch');
       }
 
       setPlayers(data.ranking || []);
-    } catch (err) {
+    } catch (err: any) {
       console.error(err);
-      setError("Erro ao carregar o ranking. Verifique sua conexão ou a configuração do MongoDB.");
+      setError(err.message || "Erro ao carregar o ranking. Verifique sua conexão ou a configuração do MongoDB.");
     } finally {
       setLoading(false);
     }
