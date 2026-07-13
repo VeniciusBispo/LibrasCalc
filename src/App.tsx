@@ -219,7 +219,7 @@ function App() {
       <div className="w-full max-w-7xl h-full flex flex-col bg-wood-pattern rounded-[3rem] shadow-wood-deep overflow-hidden border-t-2 border-l-2 border-white/50 relative">
 
         {/* White Digital Header inside the tablet */}
-        <header className="flex w-full justify-between items-center px-10 py-4 bg-white/95 backdrop-blur-md shadow-sm z-10 border-b border-slate-200">
+        <header className="flex w-full justify-between items-center px-10 py-6 bg-white/95 backdrop-blur-md shadow-sm z-10 border-b border-slate-200">
 
           {/* Left: Logo */}
           <div className="flex items-center gap-4">
