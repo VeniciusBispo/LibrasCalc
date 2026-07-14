@@ -78,6 +78,11 @@ function App() {
     if (userId) {
       useGameStore.getState().fetchUserData();
     }
+    // Corrigir alvos antigos maiores que 10 vindos do LocalStorage anterior
+    const currentTarget = useGameStore.getState().targetNumber;
+    if (currentTarget > 10) {
+      useGameStore.getState().generateNewTarget();
+    }
   }, [userId]);
 
   const activeIconItem = shopItems.find(i => i.id === activeIcon);
