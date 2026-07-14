@@ -37,7 +37,11 @@ export const EquationBoard: React.FC = () => {
       setStatus(hitTarget ? 'target' : 'success');
       setTimeout(() => {
         clearEquation();
-        generateNewTarget();
+        if (hitTarget) {
+          useGameStore.getState().completeGlobalChallenge();
+        } else {
+          useGameStore.getState().fetchGlobalChallenge();
+        }
         setStatus('idle');
       }, 2500);
     } else if (result === false) {

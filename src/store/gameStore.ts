@@ -29,6 +29,7 @@ interface GameState {
 
   // Objective
   targetNumber: number;
+  challengeExpiresAt: number | null;
 
   equationHistory: Record<string, number>;
   equation: EquationItem[];
@@ -43,6 +44,8 @@ interface GameState {
   checkEquation: () => boolean | null;
   processCorrectEquation: () => { earnedXP: number, leveledUp: boolean, earnedCoins: number, hitTarget: boolean };
   generateNewTarget: () => void;
+  fetchGlobalChallenge: () => Promise<void>;
+  completeGlobalChallenge: () => Promise<void>;
   clearInsertError: () => void;
   
   // Store Methods
@@ -86,6 +89,7 @@ export const useGameStore = create<GameState>()(
       activeDifficulty: 'diff_easy',
 
       targetNumber: generateTarget(0),
+      challengeExpiresAt: null,
 
       equationHistory: {},
       equation: [],
@@ -274,8 +278,37 @@ export const useGameStore = create<GameState>()(
       },
 
       generateNewTarget: () => {
-        const state = get();
-        set({ targetNumber: generateTarget(state.targetNumber) });
+        get().fetchGlobalChallenge();
+      },
+
+      fetchGlobalChallenge: async () => {
+        try {
+          const res = await fetch('/api/challenge');
+          if (res.ok) {
+            const data = await res.json();
+            set({ 
+              targetNumber: data.targetNumber,
+              challengeExpiresAt: data.expiresAt
+            });
+          }
+        } catch (error) {
+          console.error("Failed to fetch global challenge:", error);
+        }
+      },
+
+      completeGlobalChallenge: async () => {
+        try {
+          const res = await fetch('/api/challenge', { method: 'POST' });
+          if (res.ok) {
+            const data = await res.json();
+            set({ 
+              targetNumber: data.targetNumber,
+              challengeExpiresAt: data.expiresAt
+            });
+          }
+        } catch (error) {
+          console.error("Failed to complete global challenge:", error);
+        }
       },
 
       purchaseItem: (id: string) => {
