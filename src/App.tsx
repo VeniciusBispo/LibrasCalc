@@ -78,9 +78,9 @@ function App() {
     if (userId) {
       useGameStore.getState().fetchUserData();
     }
-    // Corrigir alvos antigos maiores que 10 vindos do LocalStorage anterior
+    // Corrigir alvos antigos inválidos vindos do LocalStorage anterior
     const currentTarget = useGameStore.getState().targetNumber;
-    if (currentTarget > 10) {
+    if (currentTarget > 10 || currentTarget < 2) {
       useGameStore.getState().generateNewTarget();
     }
   }, [userId]);

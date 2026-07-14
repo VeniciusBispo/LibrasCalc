@@ -59,11 +59,12 @@ let syncTimeout: ReturnType<typeof setTimeout> | null = null;
 const SYNC_DEBOUNCE_MS = 1500;
 
 function generateTarget(currentTarget: number): number {
-  // Limite máximo de 10 pois só temos imagens de mãos de 1 a 10
+  // Limite mínimo de 2 e máximo de 10 pois só temos imagens de mãos de 1 a 10
+  const min = 2;
   const max = 10;
   let newTarget: number;
   do {
-    newTarget = Math.floor(Math.random() * max) + 1;
+    newTarget = Math.floor(Math.random() * (max - min + 1)) + min;
   } while (newTarget === currentTarget);
   return newTarget;
 }
