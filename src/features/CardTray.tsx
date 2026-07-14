@@ -17,13 +17,13 @@ export const CardTray: React.FC<CardTrayProps> = ({ mode = 'all' }) => {
 
   /* ──────── NÚMEROS ──────── */
   const renderNumbers = () => (
-    <div className="w-fit mx-auto bg-wood-dark-pattern p-2 pt-8 sm:p-6 sm:pt-10 rounded-2xl sm:rounded-[2rem] shadow-wood-inset border-b border-white/20 border-r border-white/10 relative">
+    <div className="w-full max-w-2xl xl:max-w-[48%] mx-auto bg-wood-dark-pattern p-2 pt-8 sm:p-6 sm:pt-10 rounded-2xl sm:rounded-[2rem] shadow-wood-inset border-b border-white/20 border-r border-white/10 relative">
       <h3 className="text-[0.55rem] sm:text-[0.65rem] font-black text-[#66432b]/70 uppercase tracking-[0.2em] absolute top-2.5 left-4 sm:top-3.5 sm:left-6">
         Números em Libras
       </h3>
 
       {/* Grid uniforme 3 colunas com scroll no mobile */}
-      <div className="grid grid-cols-3 sm:grid-cols-4 gap-1.5 sm:gap-3 justify-items-center max-h-[220px] sm:max-h-[400px] overflow-y-auto p-1 sm:p-2 scrollbar-thin scrollbar-thumb-amber-700/30 scrollbar-track-transparent">
+      <div className="grid grid-cols-3 sm:grid-cols-4 gap-1.5 sm:gap-3 justify-items-center max-h-[220px] sm:max-h-[400px] overflow-y-auto p-1 sm:p-2 scrollbar-thin scrollbar-thumb-amber-700/30 scrollbar-track-transparent w-full">
         {numbers.map((num) => (
           <PremiumDraggableCard
             key={`num-${num}`}
@@ -43,7 +43,7 @@ export const CardTray: React.FC<CardTrayProps> = ({ mode = 'all' }) => {
       border-b border-white/20 border-r border-white/10 relative
       ${vertical
         ? 'flex flex-col items-center py-6 px-3 sm:py-8 sm:px-4 h-full gap-2 sm:gap-3'
-        : 'w-fit mx-auto p-4 pt-8 sm:p-6 sm:pt-10'}
+        : 'w-full max-w-2xl xl:max-w-[48%] mx-auto p-4 pt-8 sm:p-6 sm:pt-10'}
     `}>
       <h3 className={`
         text-[0.55rem] sm:text-[0.65rem] font-black text-[#66432b]/70 uppercase tracking-[0.2em]
