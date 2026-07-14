@@ -9,9 +9,8 @@ export interface CardTrayProps {
 export const CardTray: React.FC<CardTrayProps> = ({ mode = 'all' }) => {
   const { addToEquation, activeDifficulty } = useGameStore();
 
-  let maxNumber = 10;
-  if (activeDifficulty === 'diff_medium') maxNumber = 20;
-  if (activeDifficulty === 'diff_hard') maxNumber = 50;
+  // Limitado a 10 pois só temos imagens de mãos de 1 a 10
+  const maxNumber = 10;
 
   const numbers = Array.from({ length: maxNumber }, (_, i) => i + 1);
   const operators = ['+', '-', '*', '/'];
