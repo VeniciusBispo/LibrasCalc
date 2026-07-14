@@ -1,6 +1,6 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { motion, AnimatePresence } from 'framer-motion';
-import { Trophy, X, AlertCircle, Medal } from 'lucide-react';
+import { Trophy, X, AlertCircle, Medal, RefreshCw } from 'lucide-react';
 import { useGameStore } from '@/store/gameStore';
 import { shopItems } from '@/store/shopItems';
 import { AnimatedIcon } from './AnimatedIcon';
@@ -22,9 +22,8 @@ export const RankingModal: React.FC<RankingModalProps> = ({ isOpen, onClose }) =
   const [players, setPlayers] = useState<Player[]>([]);
   const [loading, setLoading] = useState(true);
   const [error, setError] = useState<string | null>(null);
-  const [nextResetTime, setNextResetTime] = useState<number | null>(null);
-  const [timeLeftStr, setTimeLeftStr] = useState<string>('');
   const { userId } = useGameStore();
+  const fetchingRef = useRef(false);
 
   useEffect(() => {
     if (isOpen) {
@@ -32,25 +31,13 @@ export const RankingModal: React.FC<RankingModalProps> = ({ isOpen, onClose }) =
     }
   }, [isOpen]);
 
-  useEffect(() => {
-    if (!nextResetTime || !isOpen) return;
-    const interval = setInterval(() => {
-      const diff = nextResetTime - Date.now();
-      if (diff <= 0) {
-        setTimeLeftStr('Resetando...');
-        fetchRanking(); // Auto refresh when timer hits 0
-      } else {
-        const minutes = Math.floor(diff / 1000 / 60);
-        const seconds = Math.floor((diff / 1000) % 60);
-        setTimeLeftStr(`${minutes.toString().padStart(2, '0')}:${seconds.toString().padStart(2, '0')}`);
-      }
-    }, 1000);
-    return () => clearInterval(interval);
-  }, [nextResetTime, isOpen]);
-
   const fetchRanking = async () => {
+    // Guard contra chamadas duplicadas
+    if (fetchingRef.current) return;
+    fetchingRef.current = true;
     setLoading(true);
     setError(null);
+
     try {
       const response = await fetch('/api/getRanking');
       let data: any = {};
@@ -65,25 +52,24 @@ export const RankingModal: React.FC<RankingModalProps> = ({ isOpen, onClose }) =
       
       if (!response.ok) {
         if (response.status === 502) {
-          throw new Error("O servidor demorou muito para responder (Timeout 502). O MongoDB bloqueou a conexão ou demorou mais de 10 segundos.");
+          throw new Error("O servidor demorou muito para responder (Timeout 502).");
         }
         if (data.error === "MongoDB URI not configured") {
-          setError("MongoDB não configurado. Adicione sua URI no Netlify ou no arquivo da função para ver o ranking online.");
+          setError("MongoDB não configurado. Adicione sua URI no Netlify para ver o ranking online.");
           setLoading(false);
+          fetchingRef.current = false;
           return;
         }
         throw new Error(data.details || data.error || 'Erro de comunicação com o servidor');
       }
 
       setPlayers(data.ranking || []);
-      if (data.nextResetTime) {
-        setNextResetTime(data.nextResetTime);
-      }
     } catch (err: any) {
       console.error(err);
-      setError(err.message || "Erro ao carregar o ranking. Verifique sua conexão ou a configuração do MongoDB.");
+      setError(err.message || "Erro ao carregar o ranking.");
     } finally {
       setLoading(false);
+      fetchingRef.current = false;
     }
   };
 
@@ -107,25 +93,27 @@ export const RankingModal: React.FC<RankingModalProps> = ({ isOpen, onClose }) =
           className="relative w-full max-w-2xl bg-white rounded-3xl shadow-2xl overflow-hidden flex flex-col h-[70vh] border-4 border-indigo-500/20"
         >
           {/* Header */}
-          <div className="bg-gradient-to-r from-indigo-500 to-purple-600 p-6 text-white flex justify-between items-center shadow-md z-10 relative">
+          <div className="bg-gradient-to-r from-indigo-500 to-purple-600 p-4 sm:p-6 text-white flex justify-between items-center shadow-md z-10 relative">
             <div className="flex items-center gap-3">
-              <Trophy size={32} className="text-yellow-300 drop-shadow-md" />
-              <div className="flex flex-col">
-                <h2 className="text-3xl font-black drop-shadow-sm leading-none">Ranking Global</h2>
-                {timeLeftStr && (
-                  <span className="text-sm font-bold text-indigo-200 mt-1 flex items-center gap-1">
-                    <LucideIcons.Timer size={14} /> Reset em: {timeLeftStr}
-                  </span>
-                )}
-              </div>
+              <Trophy size={28} className="sm:w-8 sm:h-8 text-yellow-300 drop-shadow-md" />
+              <h2 className="text-xl sm:text-3xl font-black drop-shadow-sm leading-none">Ranking Global</h2>
             </div>
-            <button onClick={onClose} className="p-2 bg-black/10 hover:bg-black/20 rounded-full transition-colors self-start">
-              <X size={24} />
-            </button>
+            <div className="flex items-center gap-2">
+              <button 
+                onClick={() => fetchRanking()} 
+                disabled={loading}
+                className="p-2 bg-black/10 hover:bg-black/20 rounded-full transition-colors disabled:opacity-50 cursor-pointer"
+              >
+                <RefreshCw size={18} className={loading ? 'animate-spin' : ''} />
+              </button>
+              <button onClick={onClose} className="p-2 bg-black/10 hover:bg-black/20 rounded-full transition-colors cursor-pointer">
+                <X size={24} />
+              </button>
+            </div>
           </div>
 
           {/* Content */}
-          <div className="flex-1 overflow-y-auto p-6 bg-slate-50 relative">
+          <div className="flex-1 overflow-y-auto p-4 sm:p-6 bg-slate-50 relative">
             {loading && (
               <div className="flex flex-col items-center justify-center h-full text-slate-400">
                 <div className="animate-spin rounded-full h-12 w-12 border-b-2 border-indigo-500 mb-4"></div>
@@ -171,28 +159,28 @@ export const RankingModal: React.FC<RankingModalProps> = ({ isOpen, onClose }) =
                       animate={{ opacity: 1, y: 0 }}
                       transition={{ delay: index * 0.1 }}
                       key={player.userId}
-                      className={`flex items-center gap-4 p-4 rounded-2xl border-2 shadow-sm transition-all hover:scale-[1.01] ${bgClass} ${isMe ? 'ring-2 ring-indigo-500 ring-offset-2' : ''}`}
+                      className={`flex items-center gap-3 sm:gap-4 p-3 sm:p-4 rounded-2xl border-2 shadow-sm transition-all hover:scale-[1.01] ${bgClass} ${isMe ? 'ring-2 ring-indigo-500 ring-offset-2' : ''}`}
                     >
                       {/* Rank Position */}
-                      <div className={`font-black text-2xl w-10 text-center ${rankColor}`}>
-                        {index < 3 ? <Medal size={32} className="mx-auto drop-shadow-sm" /> : `#${index + 1}`}
+                      <div className={`font-black text-xl sm:text-2xl w-8 sm:w-10 text-center ${rankColor}`}>
+                        {index < 3 ? <Medal size={28} className="sm:w-8 sm:h-8 mx-auto drop-shadow-sm" /> : `#${index + 1}`}
                       </div>
 
                       {/* Avatar */}
-                      <div className="w-12 h-12 rounded-full bg-slate-100 border-2 border-white shadow-sm flex items-center justify-center">
+                      <div className="w-10 h-10 sm:w-12 sm:h-12 rounded-full bg-slate-100 border-2 border-white shadow-sm flex items-center justify-center">
                         <AnimatedIcon effect={shopIcon?.effect}>
-                          <IconComp size={24} className={shopIcon?.color || "text-slate-500"} strokeWidth={2.5} />
+                          <IconComp size={20} className={`sm:w-6 sm:h-6 ${shopIcon?.color || "text-slate-500"}`} strokeWidth={2.5} />
                         </AnimatedIcon>
                       </div>
 
                       {/* Name & Stats */}
-                      <div className="flex-1 flex flex-col">
+                      <div className="flex-1 flex flex-col min-w-0">
                         <div className="flex items-center gap-2">
-                          <span className={`font-black text-lg leading-none ${isMe ? 'text-indigo-700' : 'text-slate-700'}`}>
+                          <span className={`font-black text-base sm:text-lg leading-none truncate ${isMe ? 'text-indigo-700' : 'text-slate-700'}`}>
                             {player.username}
                           </span>
                           {isMe && (
-                            <span className="text-[10px] font-bold bg-indigo-500 text-white px-2 py-0.5 rounded-full uppercase tracking-wider">Você</span>
+                            <span className="text-[10px] font-bold bg-indigo-500 text-white px-2 py-0.5 rounded-full uppercase tracking-wider shrink-0">Você</span>
                           )}
                         </div>
                         <div className="flex gap-4 mt-1">
@@ -204,8 +192,8 @@ export const RankingModal: React.FC<RankingModalProps> = ({ isOpen, onClose }) =
 
                       {/* Rewards for Top 3 */}
                       {index < 3 && (
-                        <div className="flex items-center gap-1 bg-yellow-100 px-3 py-1.5 rounded-full border border-yellow-200">
-                          <span className="font-black text-yellow-600 text-sm">
+                        <div className="flex items-center gap-1 bg-yellow-100 px-2 sm:px-3 py-1 sm:py-1.5 rounded-full border border-yellow-200 shrink-0">
+                          <span className="font-black text-yellow-600 text-xs sm:text-sm">
                             +{index === 0 ? 10 : index === 1 ? 5 : 2}
                           </span>
                           <LucideIcons.Coins size={14} className="text-yellow-500" />

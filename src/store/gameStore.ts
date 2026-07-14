@@ -2,6 +2,7 @@ import { create } from 'zustand';
 import { persist } from 'zustand/middleware';
 import type { ShopCategory } from './shopItems';
 import { shopItems } from './shopItems';
+import { validateEquation, getExpectedTypeForNextSlot, isReadyToCheck, evaluateExpression } from '@/utils/mathParser';
 
 export type ItemType = 'number' | 'operator';
 
@@ -26,16 +27,23 @@ interface GameState {
   unlockedDifficulties: string[];
   activeDifficulty: string;
 
+  // Objective
+  targetNumber: number;
+
   equationHistory: Record<string, number>;
   equation: EquationItem[];
+  lastInsertError: string | null;
+
   login: (username: string, password: string, action?: 'login' | 'register') => Promise<boolean | string>;
   logout: () => void;
   addXP: (amount: number) => void;
-  addToEquation: (item: Omit<EquationItem, 'id'>) => void;
+  addToEquation: (item: Omit<EquationItem, 'id'>) => boolean;
   removeFromEquation: (id: string) => void;
   clearEquation: () => void;
   checkEquation: () => boolean | null;
-  processCorrectEquation: () => { earnedXP: number, leveledUp: boolean, earnedCoins: number };
+  processCorrectEquation: () => { earnedXP: number, leveledUp: boolean, earnedCoins: number, hitTarget: boolean };
+  generateNewTarget: () => void;
+  clearInsertError: () => void;
   
   // Store Methods
   purchaseItem: (id: string) => boolean;
@@ -44,6 +52,19 @@ interface GameState {
   // Database sync
   syncToDatabase: () => void;
   fetchUserData: () => Promise<void>;
+}
+
+// Debounce helper for database sync
+let syncTimeout: ReturnType<typeof setTimeout> | null = null;
+const SYNC_DEBOUNCE_MS = 1500;
+
+function generateTarget(currentTarget: number, maxNumber: number): number {
+  const max = Math.min(maxNumber * 2, 100);
+  let newTarget: number;
+  do {
+    newTarget = Math.floor(Math.random() * max) + 1;
+  } while (newTarget === currentTarget);
+  return newTarget;
 }
 
 export const useGameStore = create<GameState>()(
@@ -62,8 +83,12 @@ export const useGameStore = create<GameState>()(
       unlockedDifficulties: ['diff_easy'],
       activeDifficulty: 'diff_easy',
 
+      targetNumber: generateTarget(0, 10),
+
       equationHistory: {},
       equation: [],
+      lastInsertError: null,
+
       login: async (username, password, action = 'login') => {
         try {
           const res = await fetch('/api/auth', {
@@ -95,6 +120,7 @@ export const useGameStore = create<GameState>()(
           return 'Erro ao tentar conectar';
         }
       },
+
       logout: () => {
         set({ 
           userId: null, 
@@ -111,6 +137,7 @@ export const useGameStore = create<GameState>()(
           unlockedDifficulties: ['diff_easy']
         });
       },
+
       addXP: (amount) => {
         set((state) => {
           let newXP = state.xp + amount;
@@ -126,53 +153,98 @@ export const useGameStore = create<GameState>()(
         });
         get().syncToDatabase();
       },
-      addToEquation: (item) => set((state) => {
-        if (state.equation.length >= 4) return state; // Limit slots to 4
-        return {
-          equation: [...state.equation, { ...item, id: crypto.randomUUID() }]
-        };
-      }),
-      removeFromEquation: (id) => set((state) => ({
-        equation: state.equation.filter(item => item.id !== id)
-      })),
-      clearEquation: () => set({ equation: [] }),
-      checkEquation: () => {
-        const { equation } = get();
-        if (equation.length === 4) {
-          const [n1, op, n2, res] = equation;
-          if (
-            n1.type === 'number' &&
-            op.type === 'operator' &&
-            n2.type === 'number' &&
-            res.type === 'number'
-          ) {
-            const val1 = Number(n1.value);
-            const val2 = Number(n2.value);
-            const result = Number(res.value);
-            
-            let isCorrect = false;
-            if (op.value === '+') isCorrect = val1 + val2 === result;
-            else if (op.value === '-') isCorrect = val1 - val2 === result;
-            else if (op.value === '*') isCorrect = val1 * val2 === result;
-            else if (op.value === '/') isCorrect = val2 !== 0 && val1 / val2 === result;
-            
-            return isCorrect;
+
+      addToEquation: (item) => {
+        const state = get();
+        
+        // Limite máximo de 9 itens (ex: N op N op N = N op N)
+        if (state.equation.length >= 9) return false;
+        
+        // Determinar o tipo esperado para o próximo slot
+        const expectedType = getExpectedTypeForNextSlot(state.equation);
+        
+        // O sinal "=" é um operador especial — permitir apenas se não existe um ainda
+        if (item.value === '=') {
+          if (expectedType !== 'operator') {
+            set({ lastInsertError: 'Este espaço é para um número!' });
+            return false;
+          }
+          // Já tem "=" na equação?
+          const hasEqual = state.equation.some(e => e.type === 'operator' && e.value === '=');
+          if (hasEqual) {
+            set({ lastInsertError: 'Só pode ter um sinal de igual!' });
+            return false;
+          }
+          // O = precisa ter pelo menos 1 número antes
+          if (state.equation.length < 1) {
+            set({ lastInsertError: 'Coloque um número antes do igual!' });
+            return false;
           }
         }
-        return null;
+
+        // Validação de tipo
+        if (item.type !== expectedType) {
+          if (expectedType === 'number') {
+            set({ lastInsertError: 'Este espaço é para um número!' });
+          } else {
+            set({ lastInsertError: 'Este espaço é para uma operação!' });
+          }
+          return false;
+        }
+
+        set((s) => ({
+          equation: [...s.equation, { ...item, id: crypto.randomUUID() }],
+          lastInsertError: null
+        }));
+        return true;
       },
+
+      removeFromEquation: (id) => set((state) => {
+        // Ao remover um item, remover todos os itens a partir dele (para manter a sequência válida)
+        const idx = state.equation.findIndex(item => item.id === id);
+        if (idx === -1) return state;
+        return {
+          equation: state.equation.slice(0, idx),
+          lastInsertError: null
+        };
+      }),
+
+      clearEquation: () => set({ equation: [], lastInsertError: null }),
+
+      clearInsertError: () => set({ lastInsertError: null }),
+
+      checkEquation: () => {
+        const { equation } = get();
+        if (!isReadyToCheck(equation)) return null;
+        return validateEquation(equation);
+      },
+
       processCorrectEquation: () => {
-        const { equation, equationHistory, xp, level, coins } = get();
-        if (equation.length !== 4) return { earnedXP: 0, leveledUp: false, earnedCoins: 0 };
-        const [n1, op, n2, res] = equation;
-        const eqString = `${n1.value}${op.value}${n2.value}=${res.value}`;
+        const { equation, equationHistory, xp, level, coins, targetNumber } = get();
+        if (!isReadyToCheck(equation)) return { earnedXP: 0, leveledUp: false, earnedCoins: 0, hitTarget: false };
         
+        const eqString = equation.map(e => e.value).join('');
         const timesSolved = equationHistory[eqString] || 0;
         
         let earnedXP = 10;
         if (timesSolved === 1) earnedXP = 5;
         else if (timesSolved === 2) earnedXP = 2;
         else if (timesSolved >= 3) earnedXP = 1;
+
+        // Verificar se atingiu o objetivo
+        const equalIndex = equation.findIndex(e => e.type === 'operator' && e.value === '=');
+        const rightSide = equation.slice(equalIndex + 1);
+        const leftSide = equation.slice(0, equalIndex);
+        
+        // O "resultado" é avaliado de ambos os lados
+        const leftVal = evaluateExpression(leftSide);
+        const rightVal = evaluateExpression(rightSide);
+        const resultValue = rightVal ?? leftVal;
+        
+        const hitTarget = resultValue === targetNumber;
+        if (hitTarget) {
+          earnedXP += 5; // Bônus por atingir o objetivo
+        }
         
         let newXP = xp + earnedXP;
         let newLevel = level;
@@ -196,7 +268,15 @@ export const useGameStore = create<GameState>()(
         });
         
         get().syncToDatabase();
-        return { earnedXP, leveledUp, earnedCoins };
+        return { earnedXP, leveledUp, earnedCoins, hitTarget };
+      },
+
+      generateNewTarget: () => {
+        const state = get();
+        let maxNumber = 10;
+        if (state.activeDifficulty === 'diff_medium') maxNumber = 20;
+        if (state.activeDifficulty === 'diff_hard') maxNumber = 50;
+        set({ targetNumber: generateTarget(state.targetNumber, maxNumber) });
       },
 
       purchaseItem: (id: string) => {
@@ -233,21 +313,23 @@ export const useGameStore = create<GameState>()(
         get().syncToDatabase();
       },
 
-      syncToDatabase: async () => {
-        const { userId, username, level, xp, coins, activeIcon } = get();
-        if (!userId || !username) return;
-        
-        try {
-          await fetch('/api/updateScore', {
-            method: 'POST',
-            headers: {
-              'Content-Type': 'application/json'
-            },
-            body: JSON.stringify({ userId, username, level, xp, coins, activeIcon })
-          });
-        } catch (error) {
-          console.error("API sync error:", error);
-        }
+      syncToDatabase: () => {
+        // Debounce: evita chamadas excessivas
+        if (syncTimeout) clearTimeout(syncTimeout);
+        syncTimeout = setTimeout(async () => {
+          const { userId, username, level, xp, coins, activeIcon, activeTheme, activeDifficulty, unlockedIcons, unlockedThemes, unlockedDifficulties } = get();
+          if (!userId || !username) return;
+          
+          try {
+            await fetch('/api/updateScore', {
+              method: 'POST',
+              headers: { 'Content-Type': 'application/json' },
+              body: JSON.stringify({ userId, username, level, xp, coins, activeIcon, activeTheme, activeDifficulty, unlockedIcons, unlockedThemes, unlockedDifficulties })
+            });
+          } catch (error) {
+            console.error("API sync error:", error);
+          }
+        }, SYNC_DEBOUNCE_MS);
       },
 
       fetchUserData: async () => {
@@ -288,7 +370,8 @@ export const useGameStore = create<GameState>()(
         unlockedThemes: state.unlockedThemes,
         activeTheme: state.activeTheme,
         unlockedDifficulties: state.unlockedDifficulties,
-        activeDifficulty: state.activeDifficulty
+        activeDifficulty: state.activeDifficulty,
+        targetNumber: state.targetNumber
       }),
     }
   )

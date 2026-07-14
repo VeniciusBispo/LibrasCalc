@@ -29,9 +29,13 @@ export const EquationSlot: React.FC<EquationSlotProps> = ({
     : `Espaço preenchido`;
 
   return (
-    <div
+    <motion.div
       role="region"
       aria-label={ariaLabel}
+      animate={status === 'error' && isActive ? { 
+        x: [0, -6, 6, -6, 6, 0],
+        transition: { duration: 0.4 }
+      } : {}}
       className={`
         relative flex items-center justify-center 
         w-[4.5rem] h-[6.5rem] sm:w-28 sm:h-36 rounded-xl sm:rounded-3xl transition-colors duration-300
@@ -40,25 +44,28 @@ export const EquationSlot: React.FC<EquationSlotProps> = ({
         ${isEmpty ? 'bg-wood-dark-pattern shadow-wood-deep border border-[#b5835a]/50' : 'bg-transparent border-transparent'}
         
         /* Active (Glowing) state */
-        ${isActive && isEmpty ? 'ring-[3px] ring-blue-500 shadow-slot-glow animate-pulse' : ''}
+        ${isActive && isEmpty && status !== 'error' ? 'ring-[3px] ring-blue-500 shadow-slot-glow animate-pulse' : ''}
         
         /* Status feedback styles */
-        ${status === 'error' ? 'ring-4 ring-red-400 bg-red-900/10' : ''}
+        ${status === 'error' && !isActive ? 'ring-4 ring-red-400 bg-red-900/10' : ''}
+        ${status === 'error' && isActive ? 'ring-4 ring-red-400 bg-red-900/10 shadow-[0_0_16px_rgba(239,68,68,0.5)]' : ''}
         ${status === 'success' ? 'ring-4 ring-green-400 bg-green-900/10' : ''}
       `}
     >
       {isEmpty && (
         <span className={`font-black text-xl select-none z-0 ${
-          isActive 
-            ? 'text-blue-400 drop-shadow-[0_0_8px_rgba(59,130,246,0.8)]' 
-            : 'text-[#855f3f]/40 shadow-inner mix-blend-multiply'
+          status === 'error' && isActive
+            ? 'text-red-400 drop-shadow-[0_0_8px_rgba(239,68,68,0.8)]'
+            : isActive 
+              ? 'text-blue-400 drop-shadow-[0_0_8px_rgba(59,130,246,0.8)]' 
+              : 'text-[#855f3f]/40 shadow-inner mix-blend-multiply'
         }`}>
           {displayLabel}
         </span>
       )}
       
-      {/* Corner cutouts aesthetic for the active slot (mock holographic style) */}
-      {isEmpty && isActive && (
+      {/* Corner cutouts aesthetic for the active slot */}
+      {isEmpty && isActive && status !== 'error' && (
         <>
           <div className="absolute top-2 left-2 w-3 h-3 border-t-2 border-l-2 border-blue-400 rounded-tl-lg"></div>
           <div className="absolute top-2 right-2 w-3 h-3 border-t-2 border-r-2 border-blue-400 rounded-tr-lg"></div>
@@ -79,6 +86,6 @@ export const EquationSlot: React.FC<EquationSlotProps> = ({
           {children}
         </motion.div>
       )}
-    </div>
+    </motion.div>
   );
 };

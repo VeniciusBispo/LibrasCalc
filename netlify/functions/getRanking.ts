@@ -18,42 +18,8 @@ export const handler: Handler = async (event, context) => {
     await client.connect();
     const db = client.db(dbName);
     const usersCollection = db.collection('users');
-    const metaCollection = db.collection('metadata');
 
-    const RESET_INTERVAL = 30 * 60 * 1000; // 30 minutes in ms
-    const REWARDS = [10, 5, 2];
-
-    let meta = await metaCollection.findOne({ _id: 'ranking_reset' });
-    let now = Date.now();
-    let nextResetTime = meta?.nextResetTime;
-
-    if (!meta || !nextResetTime || now >= nextResetTime) {
-      // We need to trigger the reset!
-      const top3 = await usersCollection.find({}).sort({ level: -1, xp: -1 }).limit(3).project({ userId: 1 }).toArray();
-      
-      // 1. Give rewards
-      for (let i = 0; i < top3.length; i++) {
-        if (REWARDS[i]) {
-          await usersCollection.updateOne(
-            { userId: top3[i].userId }, 
-            { $inc: { coins: REWARDS[i] } }
-          );
-        }
-      }
-
-      // 2. Removed the level and XP reset so users keep their progress!
-      // await usersCollection.updateMany({}, { $set: { level: 1, xp: 0 } });
-
-      // 3. Set the new nextResetTime
-      nextResetTime = now + RESET_INTERVAL;
-      await metaCollection.updateOne(
-        { _id: 'ranking_reset' },
-        { $set: { nextResetTime } },
-        { upsert: true }
-      );
-    }
-
-    // Get top 10 users ordered by level descending
+    // Apenas retorna o ranking ordenado, sem mutações
     const ranking = await usersCollection
       .find({})
       .sort({ level: -1, xp: -1 })
@@ -66,9 +32,10 @@ export const handler: Handler = async (event, context) => {
     return {
       statusCode: 200,
       headers: {
-        'Content-Type': 'application/json'
+        'Content-Type': 'application/json',
+        'Cache-Control': 'public, max-age=30' // Cache por 30s para evitar spam
       },
-      body: JSON.stringify({ ranking, nextResetTime })
+      body: JSON.stringify({ ranking })
     };
   } catch (error: any) {
     console.error("MongoDB Connection Error:", error);
