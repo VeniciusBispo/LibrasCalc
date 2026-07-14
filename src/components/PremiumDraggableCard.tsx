@@ -95,7 +95,7 @@ export const PremiumDraggableCard: React.FC<PremiumDraggableCardProps> = ({
         rounded-xl sm:rounded-2xl border-2 ${borderAccent}
         transition-colors overflow-hidden select-none
         shadow-card-3d
-        ${isInSlot ? 'w-full h-full' : (isNumber ? 'w-[4.5rem] h-[6.5rem] sm:w-[5.5rem] sm:h-[7.5rem]' : (gifInfo?.aspect === 'landscape' ? 'w-[6.5rem] h-[6.5rem] sm:w-[14rem] sm:h-[11rem]' : 'w-[4.5rem] h-[6.5rem] sm:w-[8.5rem] sm:h-[11rem]'))}
+        ${isInSlot ? 'w-full h-full' : (isNumber ? 'w-[4.5rem] h-[6.5rem] sm:w-[5.5rem] sm:h-[7.5rem]' : (gifInfo?.aspect === 'landscape' ? 'w-[8.5rem] h-[7.5rem] sm:w-[14rem] sm:h-[11rem]' : 'w-[5.5rem] h-[7.5rem] sm:w-[8.5rem] sm:h-[11rem]'))}
         focus:outline-none focus-visible:ring-4 focus-visible:ring-blue-500 focus-visible:ring-offset-2
         ${disabled ? 'opacity-50 cursor-not-allowed' : 'cursor-grab active:cursor-grabbing'}
         ${bgClass}
