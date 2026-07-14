@@ -58,7 +58,7 @@ interface GameState {
 let syncTimeout: ReturnType<typeof setTimeout> | null = null;
 const SYNC_DEBOUNCE_MS = 1500;
 
-function generateTarget(currentTarget: number, maxNumber: number): number {
+function generateTarget(currentTarget: number): number {
   // Limite máximo de 10 pois só temos imagens de mãos de 1 a 10
   const max = 10;
   let newTarget: number;
@@ -84,7 +84,7 @@ export const useGameStore = create<GameState>()(
       unlockedDifficulties: ['diff_easy'],
       activeDifficulty: 'diff_easy',
 
-      targetNumber: generateTarget(0, 10),
+      targetNumber: generateTarget(0),
 
       equationHistory: {},
       equation: [],
@@ -274,10 +274,7 @@ export const useGameStore = create<GameState>()(
 
       generateNewTarget: () => {
         const state = get();
-        let maxNumber = 10;
-        if (state.activeDifficulty === 'diff_medium') maxNumber = 20;
-        if (state.activeDifficulty === 'diff_hard') maxNumber = 50;
-        set({ targetNumber: generateTarget(state.targetNumber, maxNumber) });
+        set({ targetNumber: generateTarget(state.targetNumber) });
       },
 
       purchaseItem: (id: string) => {

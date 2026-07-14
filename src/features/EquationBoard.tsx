@@ -5,7 +5,7 @@ import { PremiumDraggableCard } from '@/components/PremiumDraggableCard';
 import { EquationSlot } from '@/components/EquationSlot';
 import { ObjectivePanel } from '@/components/ObjectivePanel';
 import { CheckCircle, XCircle, Target, Check, AlertTriangle } from 'lucide-react';
-import { getExpectedTypeForNextSlot, hasEqualSign, isReadyToCheck } from '@/utils/mathParser';
+import { getExpectedTypeForNextSlot, isReadyToCheck } from '@/utils/mathParser';
 
 export const EquationBoard: React.FC = () => {
   const { equation, removeFromEquation, checkEquation, clearEquation, processCorrectEquation, generateNewTarget, lastInsertError, clearInsertError } = useGameStore();
@@ -118,7 +118,6 @@ export const EquationBoard: React.FC = () => {
       <div className={`flex flex-wrap justify-center gap-1.5 sm:gap-4 mt-2 sm:mt-4 ${status === 'error' ? 'animate-shake' : ''}`}>
         {/* Rendered filled slots */}
         {equation.map((item, idx) => {
-          const expectedType = idx % 2 === 0 ? 'number' : 'operator';
           // Recalculate after = sign
           const equalIdx = equation.findIndex(e => e.type === 'operator' && e.value === '=');
           let slotType: 'number' | 'operator';

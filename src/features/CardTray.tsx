@@ -7,7 +7,7 @@ export interface CardTrayProps {
 }
 
 export const CardTray: React.FC<CardTrayProps> = ({ mode = 'all' }) => {
-  const { addToEquation, activeDifficulty } = useGameStore();
+  const { addToEquation } = useGameStore();
 
   // Limitado a 10 pois só temos imagens de mãos de 1 a 10
   const maxNumber = 10;
