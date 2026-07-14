@@ -69,40 +69,49 @@ export const EquationBoard: React.FC = () => {
       aria-label="Quadro principal de equações"
     >
       
-      {/* Objective Panel */}
-      <div className="mb-3 sm:mb-4">
-        <ObjectivePanel />
+      {/* Top Panel: Objective or Feedback */}
+      <div className="h-16 sm:h-20 flex items-center justify-center mb-2 w-full relative">
+        <AnimatePresence mode="wait">
+          {status === 'idle' ? (
+            <motion.div
+              key="objective"
+              initial={{ opacity: 0, y: -15, scale: 0.9 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: 15, scale: 0.9 }}
+              transition={{ duration: 0.2 }}
+            >
+              <ObjectivePanel />
+            </motion.div>
+          ) : (
+            <motion.div
+              key="feedback"
+              initial={{ opacity: 0, y: -15, scale: 0.9 }}
+              animate={{ opacity: 1, y: 0, scale: 1 }}
+              exit={{ opacity: 0, y: 15, scale: 0.9 }}
+              transition={{ duration: 0.2 }}
+              className={`flex items-center gap-2 sm:gap-3 px-4 py-2 sm:px-8 sm:py-4 rounded-2xl sm:rounded-3xl font-black text-white shadow-xl text-sm sm:text-lg z-50 whitespace-nowrap ${
+                status === 'target' ? 'bg-gradient-to-r from-amber-400 to-yellow-500 shadow-yellow-500/30' :
+                status === 'success' ? 'bg-gradient-to-r from-green-400 to-emerald-500 shadow-green-500/30' : 
+                'bg-gradient-to-r from-red-400 to-rose-500 shadow-red-500/30'
+              }`}
+            >
+              {status === 'target' ? (
+                <>
+                  <Target className="w-5 h-5 sm:w-7 sm:h-7" /> 🎯 Objetivo Atingido! +{earnedXP} XP
+                  {levelUpData.leveledUp && <span className="ml-1 sm:ml-2 bg-white/20 px-2 py-0.5 sm:px-3 sm:py-1 rounded-full text-xs sm:text-sm">Nível Up! +{levelUpData.earnedCoins} 🪙</span>}
+                </>
+              ) : status === 'success' ? (
+                <>
+                  <CheckCircle className="w-5 h-5 sm:w-7 sm:h-7" /> Brilhante! +{earnedXP} XP
+                  {levelUpData.leveledUp && <span className="ml-1 sm:ml-2 bg-white/20 px-2 py-0.5 sm:px-3 sm:py-1 rounded-full text-xs sm:text-sm">Nível Up! +{levelUpData.earnedCoins} 🪙</span>}
+                </>
+              ) : (
+                <><XCircle className="w-5 h-5 sm:w-7 sm:h-7" /> Tente novamente!</>
+              )}
+            </motion.div>
+          )}
+        </AnimatePresence>
       </div>
-
-      {/* Animated Status Feedback */}
-      <AnimatePresence>
-        {status !== 'idle' && (
-          <motion.div
-            initial={{ opacity: 0, scale: 0.5, y: -20 }}
-            animate={{ opacity: 1, scale: 1, y: 0 }}
-            exit={{ opacity: 0, scale: 0.8, y: -20 }}
-            className={`absolute top-0 sm:-top-4 flex items-center gap-2 sm:gap-3 px-4 py-2 sm:px-8 sm:py-4 rounded-2xl sm:rounded-3xl font-black text-white shadow-xl text-sm sm:text-lg z-50 whitespace-nowrap ${
-              status === 'target' ? 'bg-gradient-to-r from-amber-400 to-yellow-500 shadow-yellow-500/30' :
-              status === 'success' ? 'bg-gradient-to-r from-green-400 to-emerald-500 shadow-green-500/30' : 
-              'bg-gradient-to-r from-red-400 to-rose-500 shadow-red-500/30'
-            }`}
-          >
-            {status === 'target' ? (
-              <>
-                <Target className="w-5 h-5 sm:w-7 sm:h-7" /> 🎯 Objetivo Atingido! +{earnedXP} XP
-                {levelUpData.leveledUp && <span className="ml-1 sm:ml-2 bg-white/20 px-2 py-0.5 sm:px-3 sm:py-1 rounded-full text-xs sm:text-sm">Nível Up! +{levelUpData.earnedCoins} 🪙</span>}
-              </>
-            ) : status === 'success' ? (
-              <>
-                <CheckCircle className="w-5 h-5 sm:w-7 sm:h-7" /> Brilhante! +{earnedXP} XP
-                {levelUpData.leveledUp && <span className="ml-1 sm:ml-2 bg-white/20 px-2 py-0.5 sm:px-3 sm:py-1 rounded-full text-xs sm:text-sm">Nível Up! +{levelUpData.earnedCoins} 🪙</span>}
-              </>
-            ) : (
-              <><XCircle className="w-5 h-5 sm:w-7 sm:h-7" /> Tente novamente!</>
-            )}
-          </motion.div>
-        )}
-      </AnimatePresence>
 
       {/* Insert Error Toast */}
       <AnimatePresence>
